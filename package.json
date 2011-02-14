@@ -1,7 +1,7 @@
 {
 	"name": "dryml",
 	"description": "DRYML templates with embedded Javascript",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"author": "Pieter Raubenheimer <pieter@wavana.com>",
 	"keywords": ["template", "engine", "dryml"],
 	"main": "./lib/dryml.js",

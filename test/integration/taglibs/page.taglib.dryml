@@ -1,0 +1,18 @@
+<taglib src="parts.taglib"/>
+	
+<def tag="page" attrs="title,highlightRight,right">
+<html>
+	<head>
+		<title><%= title %></title>
+	</head>
+	<body>
+		<div class="main">
+			<tagbody/>
+		</div>
+		<right highlighted="%{ highlightRight }">
+			<%= right %>
+			<div class="insert"><print_timeout duration="50"><attr:str><a href="#">Printed</a></attr:str></print_timeout></div>				
+		</right>
+	</body>
+</html>
+</def>

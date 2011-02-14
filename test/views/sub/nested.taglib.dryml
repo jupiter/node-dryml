@@ -1,0 +1,2 @@
+<taglib src="../simple.taglib" />
+<def tag="another"><div>another</div></def>

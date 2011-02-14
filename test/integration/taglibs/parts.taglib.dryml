@@ -1,0 +1,15 @@
+<def tag="navigation">
+	<ul id="navigation">
+		<% for (var key in this) { %>
+			<li><a href="%{ '/' + key }"><%= this[key] %></a></li>
+		<% } %>
+	</ul>
+</def>
+
+<def tag="right" attrs="highlighted">
+	<div id="right" class="%{ (highlighted) ? 'highlight' : '' }">
+		<tagbody/>
+	</div>
+</def>
+
+<def tag="print_timeout" attrs="duration,str"><%? setTimeout(function(){ buffer.print(str); buffer.end(); }, duration) %></def>

@@ -104,7 +104,7 @@ vows.describe('dryml').addBatch({
 			}
 		},
 		'with obj attribute': {
-			topic: function() { ejs.render('<taglib src="simple.taglib"/><p><with obj="%{ someObj }">Print this:<%= this %></with></p><p><with obj="Yeah!">No, print this:<em><%= this %></em></with></p><coinslot obj="%{ someObj }"><%= this %></coinslot><with obj="%{ someObj }"><p><coinslot><%= this %></coinslot></p></with>',
+			topic: function() { ejs.render('<taglib src="simple.taglib"/><p><witho obj="%{ someObj }">Print this:<%= this %></witho></p><p><witho obj="Yeah!">No, print this:<em><%= this %></em></witho></p><coinslot obj="%{ someObj }"><%= this %></coinslot><witho obj="%{ someObj }"><p><coinslot><%= this %></coinslot></p></witho>',
 			{ locals: { someObj: 'Yeah!'}}, this.callback) },
 			'at base level of tagbody': function(err, buffer) {
 				assert.includes(buffer.str, '<p>Print this:Yeah!</p>');
@@ -176,7 +176,7 @@ vows.describe('dryml').addBatch({
 	},
 	'attribute tags': {
 		'can contain ejs': {
-			topic: function(){ ejs.render('<taglib src="simple.taglib"/><print><attr:first><p><%= "Some String" %></p></attr:first></print><print><attr:first><p><%? setTimeout(function(){ buffer.print("After"); buffer.end() }, 1000) %></p></attr:first></print>', 
+			topic: function(){ ejs.render('<taglib src="simple.taglib"/><print><attr:first><p><%= "Some String" %></p></attr:first></print><print><attr:first><p><%? setTimeout(function(){ buffer.print("After"); buffer.end() }, 500) %></p></attr:first></print>', 
 				{ locals: {}, debug: false}, this.callback) },
 			'returning a string': function(err, buffer) {
 				assert.includes(buffer.str, '<first><p>Some String</p></first>');
@@ -188,7 +188,7 @@ vows.describe('dryml').addBatch({
 	},
 	'ejs in attributes': {
 		'must be able to access': {
-			topic: function(){ ejs.render('<taglib src="simple.taglib"/><print first="%{ someStr }" /><with obj="%{ someObj }"><div><print first="%{ this.str }"/></div><div><print><attr:first><%= this.alt %></attr:first></print></div></with>', 
+			topic: function(){ ejs.render('<taglib src="simple.taglib"/><print first="%{ someStr }" /><witho obj="%{ someObj }"><div><print first="%{ this.str }"/></div><div><print><attr:first><%= this.alt %></attr:first></print></div></witho>', 
 				{ locals: { someStr: "Here", someObj: { str: "New", alt: "Alt"}}, debug: false}, this.callback) },
 			'locals': function(err, buffer) {
 				assert.includes(buffer.str, '<first>Here</first>');

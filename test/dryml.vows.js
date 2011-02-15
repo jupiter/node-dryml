@@ -201,4 +201,27 @@ vows.describe('dryml').addBatch({
 			},								
 		},
 	},
+	'must throw error': {
+        // 'where tag names defined are standard html': {
+        //  topic: function(){ ejs.render('<def tag="something">Something</def><def tag="a"><a href="#"><tagbody/></a></def>', 
+        //      {}, this.callback) },
+        //  'return': function(err, buffer) {
+        //      assert.ok(err);
+        //  }
+        // },
+        // 'where tag names defined used invalid characters': {
+        //  topic: function(){ ejs.render('<def tag="something">Something</def><def tag="_abc"><tagbody/></def>', 
+        //      {}, this.callback) },
+        //  'return': function(err, buffer) {
+        //      assert.ok(err);
+        //  }
+        // },
+        // 'where tag names defined conflicts with reserved tag names': {
+        //  topic: function(){ ejs.render('<def tag="something">Something</def><def tag="tagbody"><tagbody/></def>', 
+        //      {}, this.callback) },
+        //  'return': function(err, buffer) {
+        //      assert.ok(err);
+        //  }
+        // }    			
+	}
 }).export(module);

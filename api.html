@@ -108,7 +108,87 @@ code .this { color: #19469D; }</style>
 		</script>
 	</head>
 	<body>
-<table id="source"><tbody><tr><td><h1>DRYML</h1><p>A template engine for Node and Express.</p></td><td></td></tr><tr class="filename"><td><h2 id="lib/dryml.js"><a href="#">dryml</a></h2></td><td>lib/dryml.js</td></tr><tr class="code">
+<table id="source"><tbody><tr><td><h1>DRYML</h1><p>A template engine for Node and Express.</p></td><td></td></tr><tr class="filename"><td><h2 id="lib/buffer.js"><a href="#">buffer</a></h2></td><td>lib/buffer.js</td></tr><tr class="code">
+<td class="docs">
+<p>Buffer object</p>
+
+<h2></h2>
+
+<ul><li><p><strong>param</strong>: <em>Object</em>  callback</p></li><li><p><strong>return</strong>: <em>Object</em> </p></li><li><p><strong>api</strong>: <em>public</em></p></li></ul>
+</td>
+<td class="code">
+<pre><code><span class="keyword">var</span> <span class="class">Buffer</span> = <span class="keyword">function</span>(<span class="variable">callback</span>) {
+	<span class="keyword">var</span> <span class="variable">self</span> = {
+		<span class="variable">callback</span>: (<span class="variable">callback</span>) ? <span class="variable">callback</span> : <span class="keyword">function</span>(){},
+		<span class="variable">indexes</span>: <span class="number integer">0</span>,
+		<span class="variable">count</span>: <span class="number integer">0</span>,
+		<span class="variable">buffers</span>: [],
+		<span class="variable">str</span>: &<span class="variable">quot</span>;&<span class="variable">quot</span>;,
+		<span class="variable">stackTrace</span>:[],
+		<span class="variable">replacements</span>: {},
+		<span class="variable">shouldEnd</span>: <span class="variable">false</span>,
+		<span class="variable">trace</span>: <span class="keyword">function</span>(<span class="variable">filename</span>, <span class="variable">tag</span>, <span class="variable">line</span>, <span class="variable">column</span>) {
+			<span class="variable">self</span>.<span class="variable">stackTrace</span>.<span class="variable">push</span>(<span class="string">'at '</span> + <span class="variable">tag</span> + <span class="string">' ('</span> + <span class="variable">filename</span> + <span class="string">':'</span> + <span class="variable">line</span> + <span class="string">':'</span> + <span class="variable">column</span> + <span class="string">')'</span>);
+		},
+		<span class="variable">print</span>: <span class="keyword">function</span>(<span class="variable">str</span>) {
+			<span class="variable">self</span>.<span class="variable">str</span> = <span class="variable">self</span>.<span class="variable">str</span>.<span class="variable">concat</span>(<span class="variable">str</span>);
+		},
+		<span class="variable">async</span>: <span class="keyword">function</span>(<span class="variable">scope</span>, <span class="variable">callback</span>) {
+			<span class="keyword">var</span> <span class="variable">buffer</span> = <span class="variable">self</span>;
+			<span class="variable">buffer</span>.<span class="variable">indexes</span>++;
+			<span class="variable">buffer</span>.<span class="variable">count</span>++;
+			<span class="keyword">var</span> <span class="variable">index</span> = <span class="variable">buffer</span>.<span class="variable">indexes</span>,
+				<span class="variable">replacementStr</span> = <span class="string">'§B'</span> + <span class="variable">index</span> + <span class="string">'§'</span>;
+		
+			<span class="keyword">var</span> <span class="variable">asyncBuffer</span> = <span class="variable">buffer</span>[<span class="variable">index</span>] = { 
+				<span class="variable">stackTrace</span>: [],
+				<span class="variable">str</span>: &<span class="variable">quot</span>;&<span class="variable">quot</span>;,
+				<span class="variable">trace</span>: <span class="keyword">function</span>(<span class="variable">filename</span>, <span class="variable">tag</span>, <span class="variable">line</span>, <span class="variable">column</span>) {
+					<span class="variable">asyncBuffer</span>.<span class="variable">stackTrace</span>.<span class="variable">push</span>(<span class="string">'    at '</span> + <span class="variable">tag</span> + <span class="string">' ('</span> + <span class="variable">filename</span> + <span class="string">':'</span> + <span class="variable">line</span> + <span class="string">':'</span> + <span class="variable">column</span> + <span class="string">')'</span>);
+				},				
+				<span class="variable">print</span>: <span class="keyword">function</span>(<span class="variable">str</span>) {
+					<span class="variable">asyncBuffer</span>.<span class="variable">str</span> = <span class="variable">asyncBuffer</span>.<span class="variable">str</span>.<span class="variable">concat</span>(<span class="variable">str</span>);
+				},
+				<span class="variable">end</span>: <span class="keyword">function</span>() {
+					<span class="variable">self</span>.<span class="variable">replacements</span>[<span class="variable">replacementStr</span>] = <span class="variable">asyncBuffer</span>.<span class="variable">str</span>;					
+					<span class="variable">buffer</span>.<span class="variable">count</span>--;
+					<span class="keyword">if</span> (<span class="variable">buffer</span>.<span class="variable">shouldEnd</span>) {
+						<span class="variable">buffer</span>.<span class="variable">end</span>();
+					}				
+				},
+				<span class="variable">async</span>: <span class="keyword">function</span>(<span class="variable">scope</span>, <span class="variable">callback</span>) {
+					<span class="keyword">return</span> <span class="variable">buffer</span>.<span class="variable">async</span>(<span class="variable">scope</span>, <span class="variable">callback</span>);
+				}
+			};
+			<span class="variable">callback</span>.<span class="variable">call</span>(<span class="variable">scope</span>, <span class="variable">asyncBuffer</span>);
+			<span class="keyword">return</span> <span class="variable">replacementStr</span>;
+		},
+		<span class="variable">end</span>: <span class="keyword">function</span>() {
+			<span class="keyword">if</span> (<span class="variable">self</span>.<span class="variable">count</span> == <span class="number integer">0</span>) {				
+				<span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">replacementStr</span> <span class="keyword">in</span> <span class="variable">self</span>.<span class="variable">replacements</span>) {
+					<span class="variable">self</span>.<span class="variable">str</span> = <span class="variable">self</span>.<span class="variable">str</span>.<span class="variable">replace</span>(<span class="keyword">new</span> <span class="class">RegExp</span>(<span class="variable">replacementStr</span>), <span class="variable">self</span>.<span class="variable">replacements</span>[<span class="variable">replacementStr</span>]);
+				}	
+				<span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">replacementStr</span> <span class="keyword">in</span> <span class="variable">self</span>.<span class="variable">replacements</span>) {
+					<span class="variable">self</span>.<span class="variable">str</span> = <span class="variable">self</span>.<span class="variable">str</span>.<span class="variable">replace</span>(<span class="keyword">new</span> <span class="class">RegExp</span>(<span class="variable">replacementStr</span>), <span class="variable">self</span>.<span class="variable">replacements</span>[<span class="variable">replacementStr</span>]);
+				}		
+				<span class="variable">self</span>.<span class="variable">str</span> = <span class="variable">self</span>.<span class="variable">str</span>.<span class="variable">replace</span>(<span class="regexp">/\s*\n/g</span>, &<span class="variable">quot</span>;\<span class="variable">n</span>&<span class="variable">quot</span>;);				
+				<span class="variable">self</span>.<span class="variable">callback</span>(<span class="keyword">null</span>, <span class="variable">self</span>);
+			} <span class="keyword">else</span> {
+				<span class="variable">self</span>.<span class="variable">shouldEnd</span> = <span class="variable">true</span>;
+			}
+			<span class="keyword">return</span> <span class="variable">self</span>.<span class="variable">str</span>;
+		},
+		<span class="variable">error</span>: <span class="keyword">function</span>(<span class="variable">err</span>) {
+			<span class="keyword">var</span> <span class="variable">err</span> = <span class="keyword">new</span> <span class="class">Error</span>(<span class="variable">err</span>.<span class="variable">message</span> + <span class="string">'\n'</span> + <span class="variable">self</span>.<span class="variable">stackTrace</span>.<span class="variable">slice</span>(-<span class="number integer">5</span>).<span class="variable">reverse</span>().<span class="variable">join</span>(<span class="string">'\n'</span>));
+			<span class="variable">self</span>.<span class="variable">callback</span>(<span class="variable">err</span>, <span class="variable">self</span>);
+		}
+	}	
+	<span class="keyword">return</span> <span class="variable">self</span>;
+}
+
+<span class="variable">module</span>.<span class="variable">exports</span> = <span class="class">Buffer</span>;</code></pre>
+</td>
+</tr><tr class="filename"><td><h2 id="lib/dryml.js"><a href="#">dryml</a></h2></td><td>lib/dryml.js</td></tr><tr class="code">
 <td class="docs">
 <p>Module dependencies.
  </p>
@@ -119,6 +199,7 @@ code .this { color: #19469D; }</style>
 	<span class="variable">toFunctionSource</span> = <span class="variable">require</span>(<span class="string">'./toFunctionSource'</span>),
 	<span class="class">Buffer</span> = <span class="variable">require</span>(<span class="string">'./buffer'</span>),
 	<span class="variable">renderFunctions</span> = <span class="variable">require</span>(<span class="string">'./renderFunctions'</span>),
+	<span class="variable">isValidTagname</span> = <span class="variable">require</span>(<span class="string">'./isValidTagname'</span>).<span class="variable">isValidTagname</span>,
     <span class="variable">cache</span> = {};</code></pre>
 </td>
 </tr>
@@ -158,12 +239,12 @@ code .this { color: #19469D; }</style>
 <pre><code><span class="keyword">var</span> <span class="variable">render</span> = <span class="variable">exports</span>.<span class="variable">render</span> = <span class="keyword">function</span>(<span class="variable">str</span>, <span class="variable">options</span>, <span class="variable">callback</span>) {
 	<span class="keyword">var</span> <span class="variable">compiled</span>,
 		<span class="variable">buffer</span> = <span class="class">Buffer</span>(<span class="variable">callback</span>);
-		
+	
 	<span class="variable">options</span> = <span class="variable">options</span> || {};
 	<span class="variable">options</span>.<span class="variable">locals</span> = <span class="variable">options</span>.<span class="variable">locals</span> || {};
 	<span class="variable">options</span>.<span class="variable">str</span> = <span class="variable">options</span>.<span class="variable">str</span> || <span class="variable">str</span>;
 	<span class="variable">options</span>.<span class="variable">root</span> = (<span class="variable">options</span>.<span class="variable">filename</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">options</span>.<span class="variable">filename</span>.<span class="variable">indexOf</span>(<span class="string">'/'</span>) &<span class="variable">gt</span>; <span class="number integer">0</span>) ? <span class="variable">options</span>.<span class="variable">filename</span>.<span class="variable">slice</span>(<span class="number integer">0</span>, <span class="variable">options</span>.<span class="variable">filename</span>.<span class="variable">lastIndexOf</span>(<span class="string">'/'</span>)) : <span class="variable">exports</span>.<span class="variable">root</span>;
- 
+
 	<span class="keyword">var</span> <span class="variable">context</span> = <span class="variable">options</span>.<span class="variable">scope</span> || {};
 
 	<span class="keyword">if</span> (<span class="variable">options</span>.<span class="variable">filename</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; !<span class="variable">options</span>.<span class="variable">debug</span>) {
@@ -313,86 +394,6 @@ code .this { color: #19469D; }</style>
 	    <span class="keyword">return</span> <span class="variable">obj</span>;
 	}		
 }</code></pre>
-</td>
-</tr><tr class="filename"><td><h2 id="lib/buffer.js"><a href="#">buffer</a></h2></td><td>lib/buffer.js</td></tr><tr class="code">
-<td class="docs">
-<p>Buffer object</p>
-
-<h2></h2>
-
-<ul><li><p><strong>param</strong>: <em>Object</em>  callback</p></li><li><p><strong>return</strong>: <em>Object</em> </p></li><li><p><strong>api</strong>: <em>public</em></p></li></ul>
-</td>
-<td class="code">
-<pre><code><span class="keyword">var</span> <span class="class">Buffer</span> = <span class="keyword">function</span>(<span class="variable">callback</span>) {
-	<span class="keyword">var</span> <span class="variable">self</span> = {
-		<span class="variable">callback</span>: (<span class="variable">callback</span>) ? <span class="variable">callback</span> : <span class="keyword">function</span>(){},
-		<span class="variable">indexes</span>: <span class="number integer">0</span>,
-		<span class="variable">count</span>: <span class="number integer">0</span>,
-		<span class="variable">buffers</span>: [],
-		<span class="variable">str</span>: &<span class="variable">quot</span>;&<span class="variable">quot</span>;,
-		<span class="variable">stackTrace</span>:[],
-		<span class="variable">replacements</span>: {},
-		<span class="variable">shouldEnd</span>: <span class="variable">false</span>,
-		<span class="variable">trace</span>: <span class="keyword">function</span>(<span class="variable">filename</span>, <span class="variable">tag</span>, <span class="variable">line</span>, <span class="variable">column</span>) {
-			<span class="variable">self</span>.<span class="variable">stackTrace</span>.<span class="variable">push</span>(<span class="string">'at '</span> + <span class="variable">tag</span> + <span class="string">' ('</span> + <span class="variable">filename</span> + <span class="string">':'</span> + <span class="variable">line</span> + <span class="string">':'</span> + <span class="variable">column</span> + <span class="string">')'</span>);
-		},
-		<span class="variable">print</span>: <span class="keyword">function</span>(<span class="variable">str</span>) {
-			<span class="variable">self</span>.<span class="variable">str</span> = <span class="variable">self</span>.<span class="variable">str</span>.<span class="variable">concat</span>(<span class="variable">str</span>);
-		},
-		<span class="variable">async</span>: <span class="keyword">function</span>(<span class="variable">scope</span>, <span class="variable">callback</span>) {
-			<span class="keyword">var</span> <span class="variable">buffer</span> = <span class="variable">self</span>;
-			<span class="variable">buffer</span>.<span class="variable">indexes</span>++;
-			<span class="variable">buffer</span>.<span class="variable">count</span>++;
-			<span class="keyword">var</span> <span class="variable">index</span> = <span class="variable">buffer</span>.<span class="variable">indexes</span>,
-				<span class="variable">replacementStr</span> = <span class="string">'§B'</span> + <span class="variable">index</span> + <span class="string">'§'</span>;
-		
-			<span class="keyword">var</span> <span class="variable">asyncBuffer</span> = <span class="variable">buffer</span>[<span class="variable">index</span>] = { 
-				<span class="variable">stackTrace</span>: [],
-				<span class="variable">str</span>: &<span class="variable">quot</span>;&<span class="variable">quot</span>;,
-				<span class="variable">trace</span>: <span class="keyword">function</span>(<span class="variable">filename</span>, <span class="variable">tag</span>, <span class="variable">line</span>, <span class="variable">column</span>) {
-					<span class="variable">asyncBuffer</span>.<span class="variable">stackTrace</span>.<span class="variable">push</span>(<span class="string">'    at '</span> + <span class="variable">tag</span> + <span class="string">' ('</span> + <span class="variable">filename</span> + <span class="string">':'</span> + <span class="variable">line</span> + <span class="string">':'</span> + <span class="variable">column</span> + <span class="string">')'</span>);
-				},				
-				<span class="variable">print</span>: <span class="keyword">function</span>(<span class="variable">str</span>) {
-					<span class="variable">asyncBuffer</span>.<span class="variable">str</span> = <span class="variable">asyncBuffer</span>.<span class="variable">str</span>.<span class="variable">concat</span>(<span class="variable">str</span>);
-				},
-				<span class="variable">end</span>: <span class="keyword">function</span>() {
-					<span class="variable">self</span>.<span class="variable">replacements</span>[<span class="variable">replacementStr</span>] = <span class="variable">asyncBuffer</span>.<span class="variable">str</span>;					
-					<span class="variable">buffer</span>.<span class="variable">count</span>--;
-					<span class="keyword">if</span> (<span class="variable">buffer</span>.<span class="variable">shouldEnd</span>) {
-						<span class="variable">buffer</span>.<span class="variable">end</span>();
-					}				
-				},
-				<span class="variable">async</span>: <span class="keyword">function</span>(<span class="variable">scope</span>, <span class="variable">callback</span>) {
-					<span class="keyword">return</span> <span class="variable">buffer</span>.<span class="variable">async</span>(<span class="variable">scope</span>, <span class="variable">callback</span>);
-				}
-			};
-			<span class="variable">callback</span>.<span class="variable">call</span>(<span class="variable">scope</span>, <span class="variable">asyncBuffer</span>);
-			<span class="keyword">return</span> <span class="variable">replacementStr</span>;
-		},
-		<span class="variable">end</span>: <span class="keyword">function</span>() {
-			<span class="keyword">if</span> (<span class="variable">self</span>.<span class="variable">count</span> == <span class="number integer">0</span>) {				
-				<span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">replacementStr</span> <span class="keyword">in</span> <span class="variable">self</span>.<span class="variable">replacements</span>) {
-					<span class="variable">self</span>.<span class="variable">str</span> = <span class="variable">self</span>.<span class="variable">str</span>.<span class="variable">replace</span>(<span class="keyword">new</span> <span class="class">RegExp</span>(<span class="variable">replacementStr</span>), <span class="variable">self</span>.<span class="variable">replacements</span>[<span class="variable">replacementStr</span>]);
-				}	
-				<span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">replacementStr</span> <span class="keyword">in</span> <span class="variable">self</span>.<span class="variable">replacements</span>) {
-					<span class="variable">self</span>.<span class="variable">str</span> = <span class="variable">self</span>.<span class="variable">str</span>.<span class="variable">replace</span>(<span class="keyword">new</span> <span class="class">RegExp</span>(<span class="variable">replacementStr</span>), <span class="variable">self</span>.<span class="variable">replacements</span>[<span class="variable">replacementStr</span>]);
-				}		
-				<span class="variable">self</span>.<span class="variable">str</span> = <span class="variable">self</span>.<span class="variable">str</span>.<span class="variable">replace</span>(<span class="regexp">/\s*\n/g</span>, &<span class="variable">quot</span>;\<span class="variable">n</span>&<span class="variable">quot</span>;);				
-				<span class="variable">self</span>.<span class="variable">callback</span>(<span class="keyword">null</span>, <span class="variable">self</span>);
-			} <span class="keyword">else</span> {
-				<span class="variable">self</span>.<span class="variable">shouldEnd</span> = <span class="variable">true</span>;
-			}
-			<span class="keyword">return</span> <span class="variable">self</span>.<span class="variable">str</span>;
-		},
-		<span class="variable">error</span>: <span class="keyword">function</span>(<span class="variable">err</span>) {
-			<span class="keyword">var</span> <span class="variable">err</span> = <span class="keyword">new</span> <span class="class">Error</span>(<span class="variable">err</span>.<span class="variable">message</span> + <span class="string">'\n'</span> + <span class="variable">self</span>.<span class="variable">stackTrace</span>.<span class="variable">slice</span>(-<span class="number integer">5</span>).<span class="variable">reverse</span>().<span class="variable">join</span>(<span class="string">'\n'</span>));
-			<span class="variable">self</span>.<span class="variable">callback</span>(<span class="variable">err</span>, <span class="variable">self</span>);
-		}
-	}	
-	<span class="keyword">return</span> <span class="variable">self</span>;
-}
-
-<span class="variable">module</span>.<span class="variable">exports</span> = <span class="class">Buffer</span>;</code></pre>
 </td>
 </tr><tr class="filename"><td><h2 id="lib/toFunctionSource.js"><a href="#">toFunctionSource</a></h2></td><td>lib/toFunctionSource.js</td></tr><tr class="code">
 <td class="docs">
@@ -609,6 +610,25 @@ code .this { color: #19469D; }</style>
     });
 
     <span class="variable">parser</span>.<span class="variable">parseString</span>(<span class="variable">str</span>);
+}</code></pre>
+</td>
+</tr><tr class="filename"><td><h2 id="lib/isValidTagname.js"><a href="#">isValidTagname</a></h2></td><td>lib/isValidTagname.js</td></tr><tr class="code">
+<td class="docs">
+<p>HTML tags belonging to strict XHTML, not reserved tag names and characters 
+(see <a href="http://htmldog.com/reference/htmltags/">http://htmldog.com/reference/htmltags/</a>)
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">exports</span>.<span class="variable">html</span> = &<span class="variable">quot</span>;<span class="variable">a</span>,<span class="variable">abbr</span>,<span class="variable">acronym</span>,<span class="variable">address</span>,<span class="variable">area</span>,<span class="variable">b</span>,<span class="variable">base</span>,<span class="variable">bdo</span>,<span class="variable">big</span>,<span class="variable">blockquote</span>,<span class="variable">body</span>,<span class="variable">br</span>,<span class="variable">button</span>,<span class="variable">caption</span>,<span class="variable">cite</span>,<span class="variable">code</span>,<span class="variable">col</span>,<span class="variable">colgroup</span>,<span class="variable">dd</span>,<span class="variable">del</span>,<span class="variable">dfn</span>,<span class="variable">div</span>,<span class="variable">dl</span>,<span class="class">DOCTYPE</span>,<span class="variable">dt</span>,<span class="variable">em</span>,<span class="variable">fieldset</span>,<span class="variable">form</span>,<span class="variable">h1</span>,<span class="variable">h2</span>,<span class="variable">h3</span>,<span class="variable">h4</span>,<span class="variable">h5</span>,<span class="variable">h6</span>,<span class="variable">head</span>,<span class="variable">html</span>,<span class="variable">hr</span>,<span class="variable">i</span>,<span class="variable">img</span>,<span class="variable">input</span>,<span class="variable">ins</span>,<span class="variable">kbd</span>,<span class="keyword">label</span>,<span class="variable">legend</span>,<span class="variable">li</span>,<span class="variable">link</span>,<span class="variable">map</span>,<span class="variable">meta</span>,<span class="variable">noscript</span>,<span class="variable">object</span>,<span class="variable">ol</span>,<span class="variable">optgroup</span>,<span class="variable">option</span>,<span class="variable">p</span>,<span class="variable">param</span>,<span class="variable">pre</span>,<span class="variable">q</span>,<span class="variable">samp</span>,<span class="variable">script</span>,<span class="variable">select</span>,<span class="variable">small</span>,<span class="variable">span</span>,<span class="variable">strong</span>,<span class="variable">style</span>,<span class="variable">sub</span>,<span class="variable">sup</span>,<span class="variable">table</span>,<span class="variable">tbody</span>,<span class="variable">td</span>,<span class="variable">textarea</span>,<span class="variable">tfoot</span>,<span class="variable">th</span>,<span class="variable">thead</span>,<span class="variable">title</span>,<span class="variable">tr</span>,<span class="variable">tt</span>,<span class="variable">ul</span>,<span class="keyword">var</span>&<span class="variable">quot</span>;.<span class="variable">split</span>(<span class="string">','</span>),
+	<span class="variable">restricted</span> = <span class="variable">exports</span>.<span class="variable">restricted</span> = &<span class="variable">quot</span>;<span class="variable">def</span>,<span class="variable">tagbody</span>,<span class="variable">attr</span>,<span class="variable">taglib</span>,<span class="variable">document</span>&<span class="variable">quot</span>;.<span class="variable">split</span>(<span class="string">','</span>),
+	<span class="variable">validCharacters</span> = <span class="variable">exports</span>.<span class="variable">validCharacters</span> = <span class="keyword">new</span> <span class="class">RegExp</span>(&<span class="variable">quot</span>;^[<span class="class">A</span>-<span class="class">Za</span>-<span class="variable">z</span>]([<span class="class">A</span>-<span class="class">Za</span>-<span class="variable">z0</span>-<span class="number integer">9</span>.<span class="variable">_</span>]|<span class="string">'-'</span>)*&<span class="variable">quot</span>;);
+	
+<span class="variable">exports</span>.<span class="variable">isValidTagname</span> = <span class="keyword">function</span>(<span class="variable">name</span>) {
+	<span class="keyword">if</span> (<span class="variable">html</span>.<span class="variable">indexOf</span>(<span class="variable">name</span>) == -<span class="number integer">1</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">restricted</span>.<span class="variable">indexOf</span>(<span class="variable">name</span>) == -<span class="number integer">1</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">validCharacters</span>.<span class="variable">test</span>(<span class="variable">name</span>)) {
+		<span class="keyword">return</span> <span class="variable">true</span>;
+	} <span class="keyword">else</span> {
+		<span class="keyword">return</span> <span class="variable">false</span>;
+	}
 }</code></pre>
 </td>
 </tr>	</body>

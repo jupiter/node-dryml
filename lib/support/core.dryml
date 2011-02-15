@@ -1,0 +1,5 @@
+<def tag="do"><tagbody/></def>
+<def tag="with"><tagbody/></def>
+<def tag="if" attrs="test"><% buffer.lastIf = test; if (buffer.lastIf) { %><tagbody/><% } %></def>
+<def tag="else" attrs="test"><% buffer.lastIf = (!buffer.lastIf && (test || test == null)); if (buffer.lastIf) { %><tagbody/><% } %></def>
+<def tag="repeat"><if test="%{ this }"><% for (var i in this) { %><do obj="%{ this[i] }"><tagbody/></do><% } %></if></def>

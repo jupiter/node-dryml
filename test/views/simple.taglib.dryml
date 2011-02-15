@@ -1,10 +1,10 @@
 <def tag="hello"><div>hello</div></def>
 <def tag="coinslot"><div class="slot"><tagbody/></div></def>
-<def tag="with"><tagbody/></def>
+<def tag="witho"><tagbody/></def>
 <def tag="print" attrs="first,second,third"><first><%= first %></first><p><second><%= second %></second></p><coinslot><p><third><%= third %></third></p></coinslot><tagbody/></def>
 <def tag="uprint"><first><%= attributes.first %></first><p><second><%= attributes.second %></second></p><coinslot><p><third><%= attributes.third %></third></p></coinslot><tagbody/></def>
 <def tag="asyncto"><% buffer.print(buffer.async(this, function(buffer) { setTimeout(function(){ %>
 	<p><%= "Output" %></p>
 	<p><tagbody/></p>
 	<% buffer.end() %>
-<% }, 1000); })) %></def>
+<% }, 50); })) %></def>

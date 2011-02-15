@@ -1,3 +1,9 @@
+0.1.3 / 2011-02-15 
+==================
+
+  * Validate tag names upon definition
+  * Added first core tags incl. if/else, repeat
+  
 0.1.2 / 2011-02-15 
 ==================
 

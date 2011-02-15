@@ -1,18 +1,23 @@
 {
 	"name": "dryml",
-	"description": "DRYML templates with embedded Javascript",
-	"version": "0.1.0",
+	"description": "DRYML for Node",
+	"version": "0.1.2",
 	"author": "Pieter Raubenheimer <pieter@wavana.com>",
-	"keywords": ["template", "engine", "dryml"],
+	"keywords": ["template", "engine", "dryml", "xml", "ejs", "express"],
 	"main": "./lib/dryml.js",
 	"engines": {
 		"node": ">= 0.2.6"
 	},
 	"dependencies": {
-		"node-xml": "https://github.com/robrighter/node-xml/tarball/master",
-		"vows": "0.5.6"
+		"node-xml": "http://cloud.github.com/downloads/jupiter/node-dryml/node-xml.tgz",
+		"vows": ">= 0.5.6",
+		"express": ">= 1.0.7"
 	},
 	"scripts": {
 		"test":'echo "Expresso:\n" && expresso test/*.test* && echo "Vows:\n" && vows test/*.vows*'
+	},
+	"repository" : {
+		"type" : "git",
+		"url" : "http://github.com/jupiter/dryml.git"
 	}
 }

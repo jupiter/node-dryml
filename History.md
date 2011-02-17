@@ -1,3 +1,9 @@
+0.1.4 / 2011-02-17 
+==================
+
+  * Some JSLint improvements, reformatting
+  * Readme fix: `function(buffer)` should be `function(err, buffer)`
+  
 0.1.3 / 2011-02-15 
 ==================
 

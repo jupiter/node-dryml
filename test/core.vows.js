@@ -26,7 +26,7 @@ vows.describe('dryml').addBatch({
 		},
 		'for repeat tag': {
 			topic: function(){ ejs.render('<repeat obj="%{ testArr }"><li><%= this %></li></repeat>', 
-			    { debug: true, locals: { testArr: ['a', 'b', 'c', 'd'] } }, this.callback) },
+			    { debug: false, locals: { testArr: ['a', 'b', 'c', 'd'] } }, this.callback) },
 			"each value should be printed": function(err, buffer) {
 				assert.include(buffer.str, 'a');
 				assert.include(buffer.str, 'b');

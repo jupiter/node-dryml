@@ -16,7 +16,7 @@ Run tests:
 
 From String:
 
-    dryml.render(str, options, function(buffer){
+    dryml.render(str, options, function(err, buffer){
         console.log(buffer.str);
     });
     

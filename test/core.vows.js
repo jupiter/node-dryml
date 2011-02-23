@@ -24,15 +24,25 @@ vows.describe('dryml').addBatch({
 				assert.ok(buffer.str.indexOf('Yeh') == -1);	    
 			}						
 		},
-		'for repeat tag': {
-			topic: function(){ ejs.render('<repeat obj="%{ testArr }"><li><%= this %></li></repeat>', 
+		'for repeat tag with array': {
+			topic: function(){ ejs.render('<repeat obj="%{ testArr }"><li><%= this.value %></li></repeat>', 
 			    { debug: false, locals: { testArr: ['a', 'b', 'c', 'd'] } }, this.callback) },
 			"each value should be printed": function(err, buffer) {
-				assert.include(buffer.str, 'a');
-				assert.include(buffer.str, 'b');
-				assert.include(buffer.str, 'c');
-				assert.include(buffer.str, 'd');
+				assert.include(buffer.str, '<li>a</li>');
+				assert.include(buffer.str, '<li>b</li>');
+				assert.include(buffer.str, '<li>c</li>');
+				assert.include(buffer.str, '<li>d</li>');
 			},					
 		},
+		'for repeat tag with object': {
+			topic: function(){ ejs.render('<repeat obj="%{ testObj }"><li class="%{ this.key }"><%= this.value %> (<%= this.i %>)</li></repeat>', 
+			    { debug: false, locals: { testObj: {w:'a', x:'b', y:'c', z:'d'} } }, this.callback) },
+			"each value should be printed": function(err, buffer) {
+				assert.include(buffer.str, '<li class="w">a (0)</li>');
+				assert.include(buffer.str, '<li class="x">b (1)</li>');
+				assert.include(buffer.str, '<li class="y">c (2)</li>');
+				assert.include(buffer.str, '<li class="z">d (3)</li>');
+			},					
+		},		
 	}
 }).export(module);

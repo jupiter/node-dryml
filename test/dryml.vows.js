@@ -13,19 +13,19 @@ vows.describe('dryml').addBatch({
 			}
 		},
 		'that call defined other tags': {
-			topic: ejs.render('<def tag="header"><head><title>Something</title></head></def><def tag="test"><header/><body><p>Simple</p></body></def><test/>', {}, this.callback),
+			topic: ejs.render('<def tag="xheader"><head><title>Something</title></head></def><def tag="test"><xheader/><body><p>Simple</p></body></def><test/>', {}, this.callback),
 			'return': function(buffer) {
 				assert.equal(buffer.str, '<head><title>Something</title></head><body><p>Simple</p></body>');
 			}
 		},		
 		'with attributes available as local vars': {
-			topic: function(){ ejs.render('<def tag="header" attrs="title"><title><%= title %></title><meta><%= attributes["add"] %></meta></def><header title="Something" add="dynamic"/>', {}, this.callback) },
+			topic: function(){ ejs.render('<def tag="xheader" attrs="title"><title><%= title %></title><meta><%= attributes["add"] %></meta></def><xheader title="Something" add="dynamic"/>', {}, this.callback) },
 			'return': function(err, buffer) {
 				assert.equal(buffer.str, '<title>Something</title><meta>dynamic</meta>');
 			}
 		},
 		'with tagbody': {
-			topic: function(){ ejs.render('<def tag="header"><title><tagbody/></title></def><header>Something</header>', {}, this.callback) },
+			topic: function(){ ejs.render('<def tag="xheader"><title><tagbody/></title></def><xheader>Something</xheader>', {}, this.callback) },
 			'return': function(err, buffer) {
 				assert.equal(buffer.str, '<title>Something</title>');
 			}

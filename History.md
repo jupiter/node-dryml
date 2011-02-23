@@ -1,3 +1,10 @@
+0.1.5 / 2011-02-23 
+==================
+
+  * Added `cache` option to turn off cache
+  * Fixed parsing of EJS with reserved characters
+  * Core Taglib: Added object support for repeat tag
+  
 0.1.4 / 2011-02-17 
 ==================
 

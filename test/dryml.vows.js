@@ -201,27 +201,44 @@ vows.describe('dryml').addBatch({
 			},								
 		},
 	},
-	'must throw error': {
-        // 'where tag names defined are standard html': {
-        //  topic: function(){ ejs.render('<def tag="something">Something</def><def tag="a"><a href="#"><tagbody/></a></def>', 
-        //      {}, this.callback) },
-        //  'return': function(err, buffer) {
-        //      assert.ok(err);
-        //  }
-        // },
-        // 'where tag names defined used invalid characters': {
-        //  topic: function(){ ejs.render('<def tag="something">Something</def><def tag="_abc"><tagbody/></def>', 
-        //      {}, this.callback) },
-        //  'return': function(err, buffer) {
-        //      assert.ok(err);
-        //  }
-        // },
-        // 'where tag names defined conflicts with reserved tag names': {
-        //  topic: function(){ ejs.render('<def tag="something">Something</def><def tag="tagbody"><tagbody/></def>', 
-        //      {}, this.callback) },
-        //  'return': function(err, buffer) {
-        //      assert.ok(err);
-        //  }
-        // }    			
-	}
+    'attributes can be merged': {
+		'to html tags for': {
+			topic: function(){ ejs.render('<taglib src="simple.taglib"/>' + 
+			    '<attr-html one="aah" two="bee" three="cee" four="dee" five="eee">All specified attrs</attr-html>' + 
+			    '<attr-html-alt one="aah" two="bee" three="cee" four="dee" five="eee">All non-defined plus specified</attr-html-alt>' + 
+			    '<attr-html-alt-alt one="aah" two="bee" three="cee" four="dee" five="eee">All non-defined plus specified</attr-html-alt-alt>', 
+				{debug: false}, this.callback) },
+			'attributes specified only': function(err, buffer) {
+				assert.includes(buffer.str, '<div two="bee" four="dee">');
+			},
+			'non-defined attributes plus specified only': function(err, buffer) {
+				assert.includes(buffer.str, '<div three="cee" four="dee" five="eee">');
+			},
+			'all attributes': function(err, buffer) {
+				assert.includes(buffer.str, '<div one="aah" two="bee" three="cee" four="dee" five="eee">');
+			}						
+		}
+    }
+    // 'must throw error': {
+    //         'where tag names defined are standard html': {
+    //          topic: function(){ ejs.render('<def tag="something">Something</def><def tag="a"><a href="#"><tagbody/></a></def>', 
+    //              {}, this.callback) },
+    //          'return': function(err, buffer) {
+    //              assert.ok(err);
+    //          }
+    //         },
+    //         'where tag names defined used invalid characters': {
+    //          topic: function(){ ejs.render('<def tag="something">Something</def><def tag="_abc"><tagbody/></def>', 
+    //              {}, this.callback) },
+    //          'return': function(err, buffer) {
+    //              assert.ok(err);
+    //          }
+    //         },
+    //         'where tag names defined conflicts with reserved tag names': {
+    //          topic: function(){ ejs.render('<def tag="something">Something</def><def tag="tagbody"><tagbody/></def>', 
+    //              {}, this.callback) },
+    //          'return': function(err, buffer) {
+    //              assert.ok(err);
+    //          }           
+    // },    
 }).export(module);

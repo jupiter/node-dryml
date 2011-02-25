@@ -1,0 +1,6 @@
+<taglib src="taglibs/page.taglib"/>
+<page title="Express" highlightRight="%{ true }">
+	<navigation obj="%{ {one:one,two:two,three:three} }"/>
+	<h1>Welcome</h1>
+	<div class="main"><p><%= findme %></p></div>
+</page>

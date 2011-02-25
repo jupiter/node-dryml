@@ -47,7 +47,7 @@ Defining a tag (like a inline partial, to be reused):
                     // Etc.
                 </script>
             </head>
-            <body>
+            <body merge-attrs="*">
                 <tagbody/>
             </body>
         </html>
@@ -55,7 +55,7 @@ Defining a tag (like a inline partial, to be reused):
     
 Using a tag:
     
-    <page title="Welcome">
+    <page title="Welcome" class="welcome">
         <div class="wrapper">
             <h1>Welcome</h1>
             <div class="content">
@@ -80,7 +80,7 @@ Output:
                 // Etc.
             </script>            
         </head>
-        <body>
+        <body class="welcome">
             <h1>Welcome</h1>
             <div class="content">
                 <p>Some Content</p>
@@ -113,7 +113,7 @@ Defining multiple tags (in separate taglib file):
             <head>
                 <title><%= title %></title>
             </head>
-            <body>
+            <body merge-attrs="*">
                  <h1><%= title %></h1>
                  <div class="content">
                     <tagbody />
@@ -129,7 +129,7 @@ Using a tag:
 
     <taglib src="taglibfile" />
     
-    <page title="Welcome" navigation="three">
+    <page title="Welcome" navigation="three" class="welcome">
         <p>Some Content</p>
     </page>
 

@@ -35,14 +35,18 @@ vows.describe('dryml').addBatch({
 			},					
 		},
 		'for repeat tag with object': {
-			topic: function(){ ejs.render('<repeat obj="%{ testObj }"><li class="%{ this.key }"><%= this.value %> (<%= this.i %>)</li></repeat>', 
+			topic: function(){ ejs.render('<repeat obj="%{ testObj }"><li class="%{ this.key + ((this.isLast) ? \' last\' : \'\') + ((this.isFirst) ? \' first\' : \'\') }"><%= this.value %> (<%= this.i %>)</li></repeat>', 
 			    { debug: false, locals: { testObj: {w:'a', x:'b', y:'c', z:'d'} } }, this.callback) },
 			"each value should be printed": function(err, buffer) {
-				assert.include(buffer.str, '<li class="w">a (0)</li>');
+				assert.include(buffer.str, 'a (0)</li>');
 				assert.include(buffer.str, '<li class="x">b (1)</li>');
 				assert.include(buffer.str, '<li class="y">c (2)</li>');
-				assert.include(buffer.str, '<li class="z">d (3)</li>');
-			},					
+				assert.include(buffer.str, 'd (3)</li>');
+			},
+			"that includes boolean for isFirst/isLast": function(err, buffer) {
+			    assert.include(buffer.str, '<li class="w first">');
+			    assert.include(buffer.str, '<li class="z last">');
+			}
 		},		
 	}
 }).export(module);

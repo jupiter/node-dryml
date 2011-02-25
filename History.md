@@ -1,3 +1,17 @@
+0.1.6 / 2011-02-26 
+==================
+
+  * Attribute inheritance/merging with `merge-attrs=""` for all, `merge-attrs="name"` for named attributes
+  * Changed `callback` to `tagbody` to use in by `tagbody.call(this)` in EJS
+  * TODO: Express error integration
+  
+0.1.5 / 2011-02-23 
+==================
+
+  * Added `cache` option to turn off cache
+  * Fixed parsing of EJS with reserved characters
+  * Core Taglib: Added object support for repeat tag
+  
 0.1.4 / 2011-02-17 
 ==================
 

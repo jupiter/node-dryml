@@ -8,3 +8,24 @@
 	<p><tagbody/></p>
 	<% buffer.end() %>
 <% }, 50); })) %></def>
+<def tag="attr-html" attrs="one,two,three">
+    <body><div merge-attrs="two,four"><tagbody/></div></body>
+</def>
+<def tag="attr-html-alt" attrs="one,two,three">
+    <body><div merge-attrs="*,three"><tagbody/></div></body>
+</def>
+<def tag="attr-html-alt-alt" attrs="one,two,three">
+    <body><div merge-attrs=""><tagbody/></div></body>
+</def>
+<def tag="attr-tag" attrs="one,two,three">
+    <div><print merge-attrs="style,class"/></div>
+</def>
+<def tag="attr-tag-alt" attrs="one,two,three">
+    <div><print-attrs merge-attrs="*,three"/></div>
+</def>
+<def tag="attr-tag-alt-alt" attrs="one,two,three">
+    <div><print-attrs merge-attrs=""/></div>
+</def>
+<def tag="print-attrs" attrs="title,two,three">
+    <ul><li><%= four %></li><li><%= two %></li><li><%= three %></li></ul>
+</def>

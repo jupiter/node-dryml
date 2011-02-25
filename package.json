@@ -18,6 +18,6 @@
 	},
 	"repository" : {
 		"type" : "git",
-		"url" : "http://github.com/jupiter/dryml.git"
+		"url" : "git://github.com/jupiter/node-dryml.git"
 	}
 }

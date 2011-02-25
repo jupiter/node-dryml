@@ -11,7 +11,7 @@
 		</div>
 		<right highlighted="%{ highlightRight }">
 			<%= right %>
-			<div class="insert"><print_timeout duration="50"><attr:str><a href="#">Printed</a></attr:str></print_timeout></div>				
+			<div class="insert"><print_timeout duration="50"><attr:str><a href="#">Printed</a></attr:str></print_timeout></div>			
 		</right>
 	</body>
 </html>

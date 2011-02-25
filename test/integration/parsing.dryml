@@ -1,0 +1,8 @@
+<taglib src="taglibs/err.taglib"/>
+<page title="Express" highlightRight="%{ true }">
+	<navigation obj="%{ {one:one,two:two,three:three} }"/>
+	<h1>Welcome</h1>	
+	<attr:right>
+		<p>I should be highlighted.</p>
+	</attr:right>
+</page>

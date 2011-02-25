@@ -3,7 +3,8 @@
 
   * Attribute inheritance/merging with `merge-attrs=""` for all, `merge-attrs="name"` for named attributes
   * Changed `callback` to `tagbody` to use in by `tagbody.call(this)` in EJS
-  * TODO: Express error integration
+  * Better express error integration
+  * Added underscore library to use in views
   
 0.1.5 / 2011-02-23 
 ==================

@@ -11,7 +11,8 @@
 	"dependencies": {
 		"node-xml": "http://cloud.github.com/downloads/jupiter/node-dryml/node-xml.tgz",
 		"vows": ">= 0.5.6",
-		"express": ">= 1.0.7"
+		"express": ">= 1.0.7",
+		"underscore": ">= 1.1.0"
 	},
 	"scripts": {
 		"test":'echo "Expresso:\n" && expresso test/*.test* && echo "Vows:\n" && vows test/*.vows*'

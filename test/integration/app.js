@@ -34,6 +34,18 @@ app.get('/', function(req, res){
 	dryml.renderView('index', { trimWhitespace:false, locals: { one: 'One', two: 'Two', three: 'Three' }}, res);
 });
 
+app.get('/notdefined', function(req, res){
+	dryml.renderView('notdefined', { trimWhitespace:false, locals: { one: 'One', two: 'Two', three: 'Three' }}, res);
+});
+
+app.get('/notdefined-attr', function(req, res){
+	dryml.renderView('notdefined-attr', { trimWhitespace:false, locals: { one: 'One', two: 'Two', three: 'Three' }}, res);
+});
+
+app.get('/parsing', function(req, res){
+	dryml.renderView('parsing', { trimWhitespace:false, locals: { one: 'One', two: 'Two', three: 'Three' }}, res);
+});
+
 // Only listen on $ node app.js
 
 if (!module.parent) {

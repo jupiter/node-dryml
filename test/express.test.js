@@ -5,6 +5,8 @@
  * Module dependencies.
  */
 
+process.env.NODE_ENV = 'production';
+
 var app = require('./integration/app')
   , assert = require('assert');
 
@@ -33,5 +35,29 @@ module.exports = {
 		assert.includes(res.body, '<div class="insert"><a href="#">Printed</a></div>');
 		assert.includes(res.body, '<div id="right" class="highlight">');
       });
-  }
+  },
+  'GET /notdefined': function(){
+    assert.response(app,
+      { url: '/notdefined' },
+      { status: 500 },
+      function(res){
+        assert.includes(res.body, 'Error');
+      });
+  },
+  'GET /notdefined-attr': function(){
+    assert.response(app,
+      { url: '/notdefined-attr' },
+      { status: 500 },
+      function(res){
+        assert.includes(res.body, 'Error');
+      });
+  },
+  'GET /parsing': function(){
+    assert.response(app,
+      { url: '/parsing' },
+      { status: 500 },
+      function(res){
+        assert.includes(res.body, 'Error');
+      });
+  },    
 };

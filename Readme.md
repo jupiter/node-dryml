@@ -132,6 +132,30 @@ Using a tag:
     <page title="Welcome" navigation="three" class="welcome">
         <p>Some Content</p>
     </page>
+    
+## Important Notes
+
+DRYML templates need to be valid XML/XHTML, which means:
+
+   - Non-HTML tag content, such as within script/style/etc., must be enclosed in a CDATA tag. 
+   
+Example:
+    
+    <script>
+        <![CDATA[
+            $('body').append('<a href="/">Back</a>');
+        ]]>
+    </script>
+    
+   - Attributes must be escaped where appropriate. 
+   
+Example:
+    
+    <a href="javascript:$('body').append('&lt;a href="/"&gt;Back&lt;/a&lt;');">Text</a>
+
+
+This applies only to 'hardcoded' content/values in the DRYML templates and does *not* apply to dynamically generated content.
+    
 
 ## License 
 

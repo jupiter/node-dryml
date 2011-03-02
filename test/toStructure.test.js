@@ -82,5 +82,22 @@ var toStructure = require('../lib/toStructure'),
 		};
 	});	
 	
+	source = '<html><head><script type="text/Javascript"><![CDATA[ alert("<a>Woohoo</a>"); ]]></script><a href="javascript:alert(\'&lt;a&gt;Waahaa&lt;/a&gt;\');">Help</a></head></html>';
 	
+	toStructure(source, {}, function(err, result){
+		module.exports['structure can tolerate script within CDATA tag'] = function() {
+			var element = result[0].children[0].children[0];
+			assert.equal(element.type, 'tag');
+			assert.equal(element.element, 'script');
+			assert.equal(element.children[0].type, 'text');
+			assert.includes(element.children[0].content, 'alert("<a>Woohoo</a>");');
+		};
+		module.exports['structure can tolerate script within attribute if properly escaped'] = function() {
+			var element = result[0].children[0].children[1];
+			assert.equal(element.type, 'tag');
+			assert.equal(element.element, 'a');
+			assert.ok(element.attrs['href']);
+			assert.includes(element.attrs['href'], 'alert(\'<a>Waahaa</a>\');');
+		};		
+	});	
 })();

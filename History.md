@@ -1,3 +1,9 @@
+0.1.7 / 2011-03-02 
+==================
+
+  * Fix: Relative paths from root
+  * Allow script/style/etc. tag content within `<![CDATA[` `]]>` tag
+  
 0.1.6 / 2011-02-26 
 ==================
 

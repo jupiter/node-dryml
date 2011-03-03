@@ -1,7 +1,15 @@
+0.1.8 / 2011-03-04 
+==================
+
+  * Specific self-closing tags
+  * Fixed embedded if/else tags
+  * TODO: Restrict attribute names to exclude reserved words and invalid formats
+  * TODO: Merge `class` tag function
+  
 0.1.7 / 2011-03-02 
 ==================
 
-  * Fix: Relative paths from root
+  * Fixed elative paths from root
   * Allow script/style/etc. tag content within `<![CDATA[` `]]>` tag
   
 0.1.6 / 2011-02-26 

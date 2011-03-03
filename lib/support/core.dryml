@@ -1,9 +1,9 @@
 <def tag="do"><tagbody/></def>
 <def tag="with"><tagbody/></def>
-<def tag="if" attrs="test"><% buffer.lastIf = test; if (buffer.lastIf) { %><tagbody/><% } %></def>
-<def tag="else" attrs="test"><% buffer.lastIf = (!buffer.lastIf && (test || test == null)); if (buffer.lastIf) { %><tagbody/><% } %></def>
+<def tag="if" attrs="test"><% buffer.lastIf = test; if (buffer.lastIf) { buffer.startIfContext(); %><tagbody/><% buffer.endIfContext(); } %></def>
+<def tag="else" attrs="test"><% buffer.lastIf = (!buffer.lastIf && (test || test == null)); if (buffer.lastIf) { buffer.startIfContext(); %><tagbody/><% buffer.endIfContext(); } %></def>
 <def tag="repeat">
-<if test="%{ this }"><% 
+<if test="%{ this &amp;&amp; typeof(this) == 'object' }"><% 
     var i = 0, keys = Object.keys(this);
     for (var key in this) { 
         %><do obj="%{ {key: key, value: this[key], i: i++, isFirst:i === 1, isLast: i == keys.length} }"><tagbody/></do><% 

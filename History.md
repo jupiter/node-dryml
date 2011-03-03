@@ -3,6 +3,7 @@
 
   * Specific self-closing tags
   * Fixed embedded if/else tags
+  * Use shallow copy for locals/attribute inheritance
   * TODO: Restrict attribute names to exclude reserved words and invalid formats
   * TODO: Merge `class` tag function
   

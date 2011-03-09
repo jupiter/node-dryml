@@ -3,6 +3,7 @@ var ejs = require('..'),
     assert = require('assert');
 
 ejs.root = __dirname + '/views';
+ejs.encodeEntities = false;
 
 vows.describe('dryml').addBatch({
 	'core dryml tags are included': {
@@ -24,6 +25,24 @@ vows.describe('dryml').addBatch({
 				assert.ok(buffer.str.indexOf('Yeh') == -1);	    
 			}						
 		},
+	    'for nested if/else tags': {
+			topic: function(){ ejs.render('<if test="%{ true }">Nearly...<if test="%{ false }">Yes!</if></if><else>Neh</else><if test="%{ false }">No!</if><else test="%{ false }">Yeh</else><else>Okay<if test="%{ false }">Never</if><else test="%{ false }">Never</else></else><else>Never</else>', 
+			    { debug: false}, this.callback) },
+			"'if' should work with test attribute": function(err, buffer) {
+			    assert.include(buffer.str, 'Nearly...');	    
+				assert.ok(buffer.str.indexOf('Yes!') == -1);		    
+			},
+			"'else' should work without test": function(err, buffer) {
+				assert.ok(buffer.str.indexOf('Neh') == -1);
+				assert.include(buffer.str, 'Okay');	    
+			},
+			"'else' should work with test attribute": function(err, buffer) {
+				assert.ok(buffer.str.indexOf('Yeh') == -1);	    
+			},
+			"embedded 'if' should not affect outer if/else": function(err, buffer) {
+			    assert.ok(buffer.str.indexOf('Never') == -1);	  
+			}				
+		},		
 		'for repeat tag with array': {
 			topic: function(){ ejs.render('<repeat obj="%{ testArr }"><li><%= this.value %></li></repeat>', 
 			    { debug: false, locals: { testArr: ['a', 'b', 'c', 'd'] } }, this.callback) },

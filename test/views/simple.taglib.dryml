@@ -29,3 +29,6 @@
 <def tag="print-attrs" attrs="title,two,three">
     <ul><li><%= four %></li><li><%= two %></li><li><%= three %></li></ul>
 </def>
+<def tag="class-tag">
+    <a merge-class="blue disabled"><tagbody/></a>
+</def>

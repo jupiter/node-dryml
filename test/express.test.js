@@ -40,12 +40,12 @@ module.exports = {
         assert.includes(res.body, 'Error');
       });
   },
-  'GET /parsing': function(){
-    assert.response(app,
-      { url: '/parsing' },
-      { status: 500 },
-      function(res){
-        assert.includes(res.body, 'Error');
-      });
-  },    
+  // 'GET /parsing': function(){
+  //   assert.response(app,
+  //     { url: '/parsing' },
+  //     { status: 500 },
+  //     function(res){
+  //       assert.includes(res.body, 'Error');
+  //     });
+  // },    
 };

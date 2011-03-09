@@ -6,6 +6,7 @@
   * Use shallow copy for locals/attribute inheritance
   * TODO: Restrict attribute names to exclude reserved words and invalid formats
   * TODO: Merge `class` tag function
+  * TODO: Detect and warn on `%{}` in attribute
   
 0.1.7 / 2011-03-02 
 ==================

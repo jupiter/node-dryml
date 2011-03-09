@@ -1,9 +1,9 @@
 {
 	"name": "dryml",
 	"description": "DRYML for Node",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"author": "Pieter Raubenheimer <pieter@wavana.com>",
-	"keywords": ["template", "engine", "dryml", "xml", "ejs", "express"],
+	"keywords": ["template", "engine", "dryml", "xml", "html", "ejs", "express"],
 	"main": "./lib/dryml.js",
 	"engines": {
 		"node": ">= 0.2.6"
@@ -13,7 +13,7 @@
 		"vows": ">= 0.5.6",
 		"express": ">= 1.0.7",
 		"underscore": ">= 1.1.0",
-    	"JS-Entities": "> 0.1.0"
+    	"JS-Entities": ">= 0.1.0"
 	},
 	"scripts": {
 		"test":'echo "Expresso:\n" && expresso test/*.test* && echo "Vows:\n" && vows test/*.vows*'

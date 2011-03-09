@@ -3,6 +3,7 @@ var ejs = require('..'),
     assert = require('assert');
 
 ejs.root = __dirname + '/views';
+ejs.encodeEntities = false;
 
 vows.describe('dryml').addBatch({
 	'core dryml tags are included': {

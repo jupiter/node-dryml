@@ -9,7 +9,6 @@
 	<% buffer.end() %>
 <% }, 50); })) %></def>
 <def tag="attr-html" attrs="one,two,three">
-    <%= guava %>
     <body><div merge-attrs="two,four"><tagbody/></div></body>
 </def>
 <def tag="attr-html-alt" attrs="one,two,three">
@@ -29,4 +28,7 @@
 </def>
 <def tag="print-attrs" attrs="title,two,three">
     <ul><li><%= four %></li><li><%= two %></li><li><%= three %></li></ul>
+</def>
+<def tag="class-tag">
+    <a merge-class="blue disabled"><tagbody/></a>
 </def>

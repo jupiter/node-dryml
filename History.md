@@ -4,9 +4,12 @@
   * Specific self-closing tags
   * Fixed embedded if/else tags
   * Use shallow copy for locals/attribute inheritance
-  * TODO: Restrict attribute names to exclude reserved words and invalid formats
-  * TODO: Merge `class` tag function
-  * TODO: Detect and warn on `%{}` in attribute
+  * Restrict defined attribute names to exclude reserved words and invalid formats
+  * Same taglib can be included multiple times without conflict
+  * Fixed some errors that weren't caught
+  * Merge `class` attribute
+  * Detect and warn on `%{}` in attribute
+  * Encode HTML entities for all text and attributes, and use in free EJS using `_encode(str)`
   
 0.1.7 / 2011-03-02 
 ==================

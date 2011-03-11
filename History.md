@@ -1,4 +1,9 @@
-0.1.9 / 2011-03-04 
+0.1.10 / 2011-03-11
+===================
+
+  * Fixed case of `require('JS-Entities')`
+  
+0.1.9 / 2011-03-11 
 ==================
 
   * Updated package.json for latest npm version

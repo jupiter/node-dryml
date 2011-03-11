@@ -1,3 +1,19 @@
+0.1.11 / 2011-03-11
+===================
+
+  * Compatible with latest version of Express
+  
+0.1.10 / 2011-03-11
+===================
+
+  * Fixed case of `require('JS-Entities')`
+  
+0.1.9 / 2011-03-11 
+==================
+
+  * Updated package.json for latest npm version
+  * Regenerated API docs
+
 0.1.8 / 2011-03-04 
 ==================
 

@@ -136,15 +136,18 @@ code .this { color: #19469D; }</style>
         <span class="variable">stackTrace</span>: [],
         <span class="variable">replacements</span>: {},
         <span class="variable">shouldEnd</span>: <span class="variable">false</span>,
+        <span class="variable">fieldId</span>: <span class="number integer">9</span>,
+        <span class="variable">lastIf</span>: <span class="keyword">null</span>,
+        <span class="variable">lastIfStack</span>: [],
         <span class="variable">trace</span>: <span class="keyword">function</span>(<span class="variable">filename</span>, <span class="variable">tag</span>, <span class="variable">line</span>, <span class="variable">column</span>) {
             <span class="variable">self</span>.<span class="variable">stackTrace</span>.<span class="variable">push</span>(<span class="string">'at '</span> + <span class="variable">tag</span> + <span class="string">' ('</span> + <span class="variable">filename</span> + <span class="string">':'</span> + <span class="variable">line</span> + <span class="string">':'</span> + <span class="variable">column</span> + <span class="string">')'</span>);
         },
         <span class="variable">exit</span>: <span class="keyword">function</span>() {
             <span class="variable">self</span>.<span class="variable">stackTrace</span>.<span class="variable">pop</span>();
         },        
-        <span class="variable">print</span>: <span class="keyword">function</span>(<span class="variable">str</span>) {
+        <span class="variable">print</span>: <span class="keyword">function</span>(<span class="variable">str</span>, <span class="variable">middleware</span>) {
             <span class="keyword">if</span> (<span class="variable">str</span> !== <span class="keyword">null</span>) {
-                <span class="variable">self</span>.<span class="variable">str</span> = <span class="variable">self</span>.<span class="variable">str</span>.<span class="variable">concat</span>(<span class="variable">str</span>);
+                <span class="variable">self</span>.<span class="variable">str</span> = <span class="variable">self</span>.<span class="variable">str</span>.<span class="variable">concat</span>((<span class="variable">middleware</span>) ? <span class="variable">middleware</span>(<span class="variable">str</span>) : <span class="variable">str</span>);
             }
         },
         <span class="variable">async</span>: <span class="keyword">function</span>(<span class="variable">scope</span>, <span class="variable">callback</span>, <span class="variable">trace</span>) {
@@ -158,14 +161,19 @@ code .this { color: #19469D; }</style>
             <span class="keyword">var</span> <span class="variable">asyncBuffer</span> = <span class="variable">buffer</span>[<span class="variable">index</span>] = {
                 <span class="variable">stackTrace</span>: <span class="variable">_</span>.<span class="variable">clone</span>(<span class="variable">buffer</span>.<span class="variable">stackTrace</span>),
                 <span class="variable">str</span>: &<span class="variable">quot</span>;&<span class="variable">quot</span>;,
+                <span class="variable">lastIf</span>: <span class="keyword">null</span>,
+                <span class="variable">lastIfStack</span>: [],                
+                <span class="variable">newFieldId</span>: <span class="variable">buffer</span>.<span class="variable">newFieldId</span>,
                 <span class="variable">trace</span>: <span class="keyword">function</span>(<span class="variable">filename</span>, <span class="variable">tag</span>, <span class="variable">line</span>, <span class="variable">column</span>) {
                     <span class="variable">asyncBuffer</span>.<span class="variable">stackTrace</span>.<span class="variable">push</span>(<span class="string">'at '</span> + <span class="variable">tag</span> + <span class="string">' ('</span> + <span class="variable">filename</span> + <span class="string">':'</span> + <span class="variable">line</span> + <span class="string">':'</span> + <span class="variable">column</span> + <span class="string">')'</span>);
                 },
                 <span class="variable">exit</span>: <span class="keyword">function</span>() {
                     <span class="variable">asyncBuffer</span>.<span class="variable">stackTrace</span>.<span class="variable">pop</span>();
-                },
-                <span class="variable">print</span>: <span class="keyword">function</span>(<span class="variable">str</span>) {
-                    <span class="variable">asyncBuffer</span>.<span class="variable">str</span> = <span class="variable">asyncBuffer</span>.<span class="variable">str</span>.<span class="variable">concat</span>(<span class="variable">str</span>);
+                },                
+                <span class="variable">print</span>: <span class="keyword">function</span>(<span class="variable">str</span>, <span class="variable">middleware</span>) {
+                    <span class="keyword">if</span> (<span class="variable">str</span> !== <span class="keyword">null</span>) {                    
+                        <span class="variable">asyncBuffer</span>.<span class="variable">str</span> = <span class="variable">asyncBuffer</span>.<span class="variable">str</span>.<span class="variable">concat</span>((<span class="variable">middleware</span>) ? <span class="variable">middleware</span>(<span class="variable">str</span>) : <span class="variable">str</span>);
+                    }
                 },
                 <span class="variable">end</span>: <span class="keyword">function</span>() {
                     <span class="variable">buffer</span>.<span class="variable">replacements</span>[<span class="variable">replacementStr</span>] = <span class="variable">asyncBuffer</span>.<span class="variable">str</span>;
@@ -179,6 +187,13 @@ code .this { color: #19469D; }</style>
                 },
                 <span class="variable">error</span>: <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">errBuffer</span>) {
                     <span class="variable">buffer</span>.<span class="variable">error</span>(<span class="variable">err</span>, <span class="variable">errBuffer</span>);
+                },
+                <span class="variable">startIfContext</span>: <span class="keyword">function</span>() {
+                    <span class="variable">asyncBuffer</span>.<span class="variable">lastIfStack</span>.<span class="variable">push</span>(<span class="variable">asyncBuffer</span>.<span class="variable">lastIf</span>);
+                    <span class="variable">asyncBuffer</span>.<span class="variable">lastIf</span> = <span class="keyword">null</span>;
+                },
+                <span class="variable">endIfContext</span>: <span class="keyword">function</span>() {
+                    <span class="variable">asyncBuffer</span>.<span class="variable">lastIf</span> = <span class="variable">asyncBuffer</span>.<span class="variable">lastIfStack</span>.<span class="variable">pop</span>();
                 }
             };
             <span class="keyword">try</span> {
@@ -210,7 +225,18 @@ code .this { color: #19469D; }</style>
             <span class="variable">err</span> = <span class="keyword">new</span> <span class="class">Error</span>(<span class="variable">err</span>.<span class="variable">message</span>);
             <span class="variable">err</span>.<span class="variable">stack</span> = <span class="variable">err</span>.<span class="variable">stack</span>.<span class="variable">replace</span>(<span class="string">'\n    at'</span>,  <span class="string">'\n    '</span> + <span class="variable">errBuffer</span>.<span class="variable">stackTrace</span>.<span class="variable">slice</span>( - <span class="number integer">5</span>).<span class="variable">reverse</span>().<span class="variable">join</span>(<span class="string">'\n    '</span>) + <span class="string">'\n    at'</span>);
             <span class="variable">self</span>.<span class="variable">callback</span>(<span class="variable">err</span>, <span class="variable">self</span>);
-        }
+        },
+        <span class="variable">newFieldId</span>: <span class="keyword">function</span>() {
+            <span class="variable">self</span>.<span class="variable">fieldId</span> += <span class="number integer">1</span>;
+            <span class="keyword">return</span> <span class="string">'field-'</span> + <span class="variable">self</span>.<span class="variable">fieldId</span>.<span class="variable">toString</span>(<span class="number integer">16</span>);;
+        },
+        <span class="variable">startIfContext</span>: <span class="keyword">function</span>() {
+            <span class="variable">self</span>.<span class="variable">lastIfStack</span>.<span class="variable">push</span>(<span class="variable">self</span>.<span class="variable">lastIf</span>);
+            <span class="variable">self</span>.<span class="variable">lastIf</span> = <span class="keyword">null</span>;
+        },
+        <span class="variable">endIfContext</span>: <span class="keyword">function</span>() {
+            <span class="variable">self</span>.<span class="variable">lastIf</span> = <span class="variable">self</span>.<span class="variable">lastIfStack</span>.<span class="variable">pop</span>();
+        }       
     };
     <span class="keyword">return</span> <span class="variable">self</span>;
 };
@@ -228,7 +254,8 @@ code .this { color: #19469D; }</style>
     <span class="variable">toFunctionSource</span> = <span class="variable">require</span>(<span class="string">'./toFunctionSource'</span>),
     <span class="class">Buffer</span> = <span class="variable">require</span>(<span class="string">'./buffer'</span>),
     <span class="variable">renderFunctions</span> = <span class="variable">require</span>(<span class="string">'./renderFunctions'</span>),
-    <span class="variable">isValidTagname</span> = <span class="variable">require</span>(<span class="string">'./isValidTagname'</span>).<span class="variable">isValidTagname</span>,
+    <span class="variable">isValidTagname</span> = <span class="variable">require</span>(<span class="string">'./isValidName'</span>).<span class="variable">isValidTagname</span>,
+    <span class="variable">isValidAttributename</span> = <span class="variable">require</span>(<span class="string">'./isValidName'</span>).<span class="variable">isValidAttributename</span>,
     <span class="variable">cache</span> = {};</code></pre>
 </td>
 </tr>
@@ -240,7 +267,9 @@ code .this { color: #19469D; }</style>
 <td class="code">
 <pre><code><span class="variable">exports</span>.<span class="variable">root</span> = <span class="variable">process</span>.<span class="variable">cwd</span>() + <span class="string">'/views'</span>;
 <span class="variable">exports</span>.<span class="variable">ext</span> = <span class="string">'dryml'</span>;
-<span class="variable">exports</span>.<span class="variable">version</span> = &<span class="variable">quot</span>;<span class="number float">0.1</span>.<span class="number integer">5</span>&<span class="variable">quot</span>;;</code></pre>
+<span class="variable">exports</span>.<span class="variable">version</span> = &<span class="variable">quot</span>;<span class="number float">0.1</span>.<span class="number integer">5</span>&<span class="variable">quot</span>;;
+<span class="variable">exports</span>.<span class="variable">cache</span> = <span class="variable">true</span>;
+<span class="variable">exports</span>.<span class="variable">encodeEntities</span> = <span class="variable">true</span>;</code></pre>
 </td>
 </tr>
 <tr class="code">
@@ -253,7 +282,8 @@ code .this { color: #19469D; }</style>
 </td>
 <td class="code">
 <pre><code><span class="keyword">function</span> <span class="variable">realPath</span>(<span class="variable">view</span>, <span class="variable">root</span>) {
-    <span class="keyword">return</span> (<span class="variable">view</span>[<span class="number integer">0</span>] == <span class="string">'/'</span>) ? <span class="variable">view</span>: <span class="variable">fs</span>.<span class="variable">realpathSync</span>((<span class="variable">root</span> || <span class="variable">exports</span>.<span class="variable">root</span>) + <span class="string">'/'</span> + <span class="variable">view</span> + <span class="string">'.'</span> + <span class="variable">exports</span>.<span class="variable">ext</span>);
+    <span class="keyword">var</span> <span class="variable">returnPath</span> = (<span class="variable">view</span>[<span class="number integer">0</span>] == <span class="string">'/'</span>) ? <span class="variable">view</span>: <span class="variable">fs</span>.<span class="variable">realpathSync</span>((<span class="variable">root</span> || <span class="variable">exports</span>.<span class="variable">root</span>) + <span class="string">'/'</span> + <span class="variable">view</span> + <span class="string">'.'</span> + <span class="variable">exports</span>.<span class="variable">ext</span>);
+    <span class="keyword">return</span> <span class="variable">returnPath</span>;
 }</code></pre>
 </td>
 </tr>
@@ -274,12 +304,23 @@ code .this { color: #19469D; }</style>
     <span class="keyword">try</span> {
         <span class="variable">options</span> = <span class="variable">options</span> || {};
         <span class="variable">options</span>.<span class="variable">locals</span> = <span class="variable">options</span>.<span class="variable">locals</span> || {};
+        <span class="variable">options</span>.<span class="variable">cache</span> = (<span class="variable">options</span>.<span class="variable">cache</span> === <span class="keyword">null</span> || <span class="keyword">typeof</span>(<span class="variable">options</span>.<span class="variable">cache</span>) == <span class="string">'undefined'</span>) ? <span class="variable">exports</span>.<span class="variable">cache</span> : <span class="variable">options</span>.<span class="variable">cache</span>;        
+        <span class="variable">options</span>.<span class="variable">encodeEntities</span> = (<span class="variable">options</span>.<span class="variable">encodeEntities</span> === <span class="keyword">null</span> || <span class="keyword">typeof</span>(<span class="variable">options</span>.<span class="variable">encodeEntities</span>) == <span class="string">'undefined'</span>) ? <span class="variable">exports</span>.<span class="variable">encodeEntities</span> : <span class="variable">options</span>.<span class="variable">encodeEntities</span>;
         <span class="variable">options</span>.<span class="variable">str</span> = <span class="variable">options</span>.<span class="variable">str</span> || <span class="variable">str</span>;
-        <span class="variable">options</span>.<span class="variable">root</span> = (<span class="variable">options</span>.<span class="variable">filename</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">options</span>.<span class="variable">filename</span>.<span class="variable">indexOf</span>(<span class="string">'/'</span>) &<span class="variable">gt</span>; <span class="number integer">0</span>) ? <span class="variable">options</span>.<span class="variable">filename</span>.<span class="variable">slice</span>(<span class="number integer">0</span>, <span class="variable">options</span>.<span class="variable">filename</span>.<span class="variable">lastIndexOf</span>(<span class="string">'/'</span>)) : <span class="variable">exports</span>.<span class="variable">root</span>;
-
+        <span class="keyword">if</span> (<span class="variable">options</span>.<span class="variable">filename</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">options</span>.<span class="variable">filename</span>.<span class="variable">indexOf</span>(<span class="string">'/'</span>) &<span class="variable">gt</span>; <span class="number integer">0</span>) {
+            <span class="keyword">var</span> <span class="variable">lastSlashIndex</span> = <span class="variable">options</span>.<span class="variable">filename</span>.<span class="variable">lastIndexOf</span>(<span class="string">'/'</span>);
+            <span class="variable">options</span>.<span class="variable">root</span> = <span class="variable">exports</span>.<span class="variable">root</span> + <span class="string">'/'</span> + <span class="variable">options</span>.<span class="variable">filename</span>.<span class="variable">slice</span>(<span class="number integer">0</span>, <span class="variable">lastSlashIndex</span>);
+            <span class="variable">options</span>.<span class="variable">filename</span> = <span class="variable">options</span>.<span class="variable">filename</span>.<span class="variable">slice</span>(<span class="variable">lastSlashIndex</span> + <span class="number integer">1</span>);
+        } <span class="keyword">else</span> {
+            <span class="variable">options</span>.<span class="variable">root</span> = <span class="variable">exports</span>.<span class="variable">root</span>;
+        }
         <span class="keyword">var</span> <span class="variable">context</span> = <span class="variable">options</span>.<span class="variable">scope</span> || {};
 
-        <span class="keyword">if</span> (<span class="variable">options</span>.<span class="variable">filename</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; !<span class="variable">options</span>.<span class="variable">debug</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">options</span>.<span class="variable">cache</span> === <span class="variable">true</span>) {
+        <span class="keyword">if</span> (<span class="variable">options</span>.<span class="variable">debug</span> || <span class="variable">options</span>.<span class="variable">cache</span> != <span class="variable">true</span>) {
+            <span class="variable">cache</span> = {};
+        }
+
+        <span class="keyword">if</span> (!<span class="variable">options</span>.<span class="variable">str</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">options</span>.<span class="variable">filename</span>) {
             <span class="variable">path</span> = <span class="variable">options</span>.<span class="variable">filepath</span> = <span class="variable">realPath</span>(<span class="variable">options</span>.<span class="variable">filename</span>, <span class="variable">options</span>.<span class="variable">root</span>);
             <span class="comment">// Use cached if available, otherwise compile</span>
             <span class="variable">compiled</span> = <span class="variable">cache</span>[<span class="variable">path</span>];
@@ -291,7 +332,7 @@ code .this { color: #19469D; }</style>
                 <span class="variable">compile</span>(<span class="variable">options</span>.<span class="variable">str</span>, <span class="string">'page'</span>, <span class="variable">options</span>,
                 <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">compiled</span>) {
                     <span class="keyword">if</span> (<span class="variable">err</span>) {
-                        <span class="keyword">throw</span> <span class="variable">err</span>;
+                        <span class="variable">callback</span>(<span class="variable">err</span>);
                     } <span class="keyword">else</span> {                    
                         <span class="keyword">try</span> {
                             <span class="variable">cache</span>[<span class="variable">path</span>] = <span class="variable">compiled</span>;
@@ -305,10 +346,6 @@ code .this { color: #19469D; }</style>
                 <span class="variable">compiled</span>.<span class="variable">fn</span>(<span class="variable">context</span>, <span class="variable">compiled</span>.<span class="variable">taglib</span>, <span class="variable">options</span>.<span class="variable">locals</span>, <span class="variable">buffer</span>);
             }
         } <span class="keyword">else</span> {
-            <span class="keyword">if</span> (!<span class="variable">options</span>.<span class="variable">str</span>) {
-                <span class="variable">path</span> = <span class="variable">options</span>.<span class="variable">filepath</span> = <span class="variable">realPath</span>(<span class="variable">options</span>.<span class="variable">filename</span>, <span class="variable">options</span>.<span class="variable">root</span>);
-                <span class="variable">options</span>.<span class="variable">str</span> = <span class="string">''</span> + <span class="variable">fs</span>.<span class="variable">readFileSync</span>(<span class="variable">path</span>);
-            }
             <span class="variable">compile</span>(<span class="variable">options</span>.<span class="variable">str</span>, <span class="string">'page'</span>, <span class="variable">options</span>,
             <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">compiled</span>) {
                 <span class="keyword">if</span> (<span class="variable">err</span>) {
@@ -341,7 +378,7 @@ code .this { color: #19469D; }</style>
 <pre><code><span class="keyword">var</span> <span class="variable">renderView</span> = <span class="variable">exports</span>.<span class="variable">renderView</span> = <span class="keyword">function</span>(<span class="variable">view</span>, <span class="variable">options</span>, <span class="variable">response</span>) {
     <span class="variable">options</span> = <span class="variable">options</span> || {};
     <span class="variable">options</span>.<span class="variable">filename</span> = <span class="variable">view</span>;
-    <span class="variable">render</span>(<span class="keyword">null</span>, <span class="variable">options</span>,
+    <span class="variable">render</span>(<span class="keyword">null</span>, <span class="variable">options</span>, (<span class="keyword">typeof</span>(<span class="variable">response</span>) == <span class="string">'function'</span>) ? <span class="variable">response</span> :
     <span class="keyword">function</span>(<span class="variable">err</span>, <span class="variable">buffer</span>) {
         <span class="keyword">if</span> (<span class="variable">err</span>) {
             <span class="variable">response</span>.<span class="variable">req</span>.<span class="variable">next</span>(<span class="variable">err</span>);
@@ -418,7 +455,7 @@ code .this { color: #19469D; }</style>
     });
 };</code></pre>
 </td>
-</tr><tr class="filename"><td><h2 id="lib/isValidTagname.js"><a href="#">isValidTagname</a></h2></td><td>lib/isValidTagname.js</td></tr><tr class="code">
+</tr><tr class="filename"><td><h2 id="lib/isValidName.js"><a href="#">isValidName</a></h2></td><td>lib/isValidName.js</td></tr><tr class="code">
 <td class="docs">
 <p>HTML tags belonging to strict XHTML, not reserved tag names and characters 
 (see <a href="http://htmldog.com/reference/htmltags/">http://htmldog.com/reference/htmltags/</a>, plus additional tags from <a href="http://remysharp.com/2009/01/07/html5-enabling-script/">http://remysharp.com/2009/01/07/html5-enabling-script/</a>)
@@ -427,26 +464,48 @@ code .this { color: #19469D; }</style>
 <td class="code">
 <pre><code><span class="keyword">var</span> <span class="variable">html</span> = <span class="variable">exports</span>.<span class="variable">html</span> = &<span class="variable">quot</span>;<span class="variable">a</span>,<span class="variable">abbr</span>,<span class="variable">acronym</span>,<span class="variable">address</span>,<span class="variable">area</span>,<span class="variable">b</span>,<span class="variable">base</span>,<span class="variable">bdo</span>,<span class="variable">big</span>,<span class="variable">blockquote</span>,<span class="variable">body</span>,<span class="variable">br</span>,<span class="variable">button</span>,<span class="variable">caption</span>,<span class="variable">cite</span>,<span class="variable">code</span>,<span class="variable">col</span>,<span class="variable">colgroup</span>,<span class="variable">dd</span>,<span class="variable">del</span>,<span class="variable">dfn</span>,<span class="variable">div</span>,<span class="variable">dl</span>,<span class="class">DOCTYPE</span>,<span class="variable">dt</span>,<span class="variable">em</span>,<span class="variable">fieldset</span>,<span class="variable">form</span>,<span class="variable">h1</span>,<span class="variable">h2</span>,<span class="variable">h3</span>,<span class="variable">h4</span>,<span class="variable">h5</span>,<span class="variable">h6</span>,<span class="variable">head</span>,<span class="variable">html</span>,<span class="variable">hr</span>,<span class="variable">i</span>,<span class="variable">img</span>,<span class="variable">input</span>,<span class="variable">ins</span>,<span class="variable">kbd</span>,<span class="keyword">label</span>,<span class="variable">legend</span>,<span class="variable">li</span>,<span class="variable">link</span>,<span class="variable">map</span>,<span class="variable">meta</span>,<span class="variable">noscript</span>,<span class="variable">object</span>,<span class="variable">ol</span>,<span class="variable">optgroup</span>,<span class="variable">option</span>,<span class="variable">p</span>,<span class="variable">param</span>,<span class="variable">pre</span>,<span class="variable">q</span>,<span class="variable">samp</span>,<span class="variable">script</span>,<span class="variable">select</span>,<span class="variable">small</span>,<span class="variable">span</span>,<span class="variable">strong</span>,<span class="variable">style</span>,<span class="variable">sub</span>,<span class="variable">sup</span>,<span class="variable">table</span>,<span class="variable">tbody</span>,<span class="variable">td</span>,<span class="variable">textarea</span>,<span class="variable">tfoot</span>,<span class="variable">th</span>,<span class="variable">thead</span>,<span class="variable">title</span>,<span class="variable">tr</span>,<span class="variable">tt</span>,<span class="variable">ul</span>,<span class="keyword">var</span>,<span class="variable">abbr</span>,<span class="variable">article</span>,<span class="variable">aside</span>,<span class="variable">audio</span>,<span class="variable">canvas</span>,<span class="variable">details</span>,<span class="variable">figcaption</span>,<span class="variable">figure</span>,<span class="variable">footer</span>,<span class="variable">header</span>,<span class="variable">hgroup</span>,<span class="variable">mark</span>,<span class="variable">meter</span>,<span class="variable">nav</span>,<span class="variable">output</span>,<span class="variable">progress</span>,<span class="variable">section</span>,<span class="variable">summary</span>,<span class="variable">time</span>,<span class="variable">video</span>&<span class="variable">quot</span>;.<span class="variable">split</span>(<span class="string">','</span>),
     <span class="variable">restricted</span> = <span class="variable">exports</span>.<span class="variable">restricted</span> = &<span class="variable">quot</span>;<span class="variable">def</span>,<span class="variable">tagbody</span>,<span class="variable">attr</span>,<span class="variable">taglib</span>,<span class="variable">document</span>&<span class="variable">quot</span>;.<span class="variable">split</span>(<span class="string">','</span>),
-    <span class="variable">validCharacters</span> = <span class="variable">exports</span>.<span class="variable">validCharacters</span> = <span class="keyword">new</span> <span class="class">RegExp</span>(&<span class="variable">quot</span>;^[<span class="class">A</span>-<span class="class">Za</span>-<span class="variable">z</span>]([<span class="class">A</span>-<span class="class">Za</span>-<span class="variable">z0</span>-<span class="number integer">9</span>.<span class="variable">_</span>]|<span class="string">'-'</span>)*&<span class="variable">quot</span>;);
+    <span class="variable">validTagCharacters</span> = <span class="variable">exports</span>.<span class="variable">validTagCharacters</span> = <span class="keyword">new</span> <span class="class">RegExp</span>(&<span class="variable">quot</span>;^[<span class="class">A</span>-<span class="class">Za</span>-<span class="variable">z</span>]([<span class="class">A</span>-<span class="class">Za</span>-<span class="variable">z0</span>-<span class="number integer">9</span>.<span class="variable">_</span>\-])*&<span class="variable">quot</span>;),
+    <span class="variable">validAttributeCharacters</span> = <span class="variable">exports</span>.<span class="variable">validAttributeCharacters</span> = <span class="keyword">new</span> <span class="class">RegExp</span>(&<span class="variable">quot</span>;^[<span class="variable">a</span>-<span class="variable">z</span>]([<span class="class">A</span>-<span class="class">Za</span>-<span class="variable">z0</span>-<span class="variable">_</span>])*&<span class="variable">quot</span>;),
+    <span class="variable">reservedWordsJS</span> = &<span class="variable">quot</span>;<span class="keyword">break</span>,<span class="keyword">case</span>,<span class="keyword">catch</span>,<span class="keyword">continue</span>,<span class="keyword">debugger</span>,<span class="keyword">default</span>,<span class="keyword">delete</span>,<span class="keyword">do</span>,<span class="keyword">else</span>,<span class="keyword">finally</span>,<span class="keyword">for</span>,<span class="keyword">function</span>,<span class="keyword">if</span>,<span class="keyword">in</span>,<span class="variable">instanceof</span>,<span class="keyword">new</span>,<span class="keyword">return</span>,<span class="keyword">switch</span>,<span class="this">this</span>,<span class="keyword">throw</span>,<span class="keyword">try</span>,<span class="keyword">typeof</span>,<span class="keyword">var</span>,<span class="keyword">void</span>,<span class="keyword">while</span>,<span class="keyword">with</span>,<span class="keyword">class</span>,<span class="keyword">enum</span>,<span class="keyword">export</span>,<span class="keyword">extends</span>,<span class="keyword">import</span>,<span class="keyword">super</span>,<span class="variable">implements</span>,<span class="variable">interface</span>,<span class="variable">let</span>,<span class="variable">package</span>,<span class="variable">private</span>,<span class="variable">protected</span>,<span class="variable">public</span>,<span class="variable">static</span>,<span class="variable">yield</span>&<span class="variable">quot</span>;.<span class="variable">split</span>(<span class="string">','</span>),
+    <span class="variable">reservedWordsDRYML</span> = &<span class="variable">quot</span>;<span class="variable">context</span>,<span class="variable">attributes</span>,<span class="variable">taglib</span>,<span class="variable">buffer</span>,<span class="variable">tagbody</span>,<span class="variable">sup</span>,<span class="variable">locals</span>&<span class="variable">quot</span>;.<span class="variable">split</span>(<span class="string">','</span>),
+    <span class="variable">reservedWords</span> = [<span class="string">'global'</span>, <span class="string">'process'</span>, <span class="string">'require'</span>, <span class="string">'module'</span>, <span class="string">'console'</span>, <span class="string">'sys'</span>, <span class="string">'fs'</span>].<span class="variable">concat</span>(<span class="variable">reservedWordsJS</span>).<span class="variable">concat</span>(<span class="variable">reservedWordsDRYML</span>);
 
 <span class="variable">exports</span>.<span class="variable">isValidTagname</span> = <span class="keyword">function</span>(<span class="variable">name</span>) {
-    <span class="keyword">if</span> (<span class="variable">html</span>.<span class="variable">indexOf</span>(<span class="variable">name</span>) == -<span class="number integer">1</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">restricted</span>.<span class="variable">indexOf</span>(<span class="variable">name</span>) == -<span class="number integer">1</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">validCharacters</span>.<span class="variable">test</span>(<span class="variable">name</span>)) {
+    <span class="keyword">if</span> (<span class="variable">html</span>.<span class="variable">indexOf</span>(<span class="variable">name</span>) == -<span class="number integer">1</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">restricted</span>.<span class="variable">indexOf</span>(<span class="variable">name</span>) == -<span class="number integer">1</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">validTagCharacters</span>.<span class="variable">test</span>(<span class="variable">name</span>)) {
         <span class="keyword">return</span> <span class="variable">true</span>;
     } <span class="keyword">else</span> {
         <span class="keyword">return</span> <span class="variable">false</span>;
     }
-};</code></pre>
+};
+
+<span class="variable">exports</span>.<span class="variable">isValidAttributename</span> = <span class="keyword">function</span>(<span class="variable">name</span>) {
+    <span class="keyword">if</span> (<span class="variable">reservedWords</span>.<span class="variable">indexOf</span>(<span class="variable">name</span>) == -<span class="number integer">1</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">validAttributeCharacters</span>.<span class="variable">test</span>(<span class="variable">name</span>)) {
+        <span class="keyword">return</span> <span class="variable">true</span>;
+    } <span class="keyword">else</span> {
+        <span class="keyword">return</span> <span class="variable">false</span>;
+    }    
+}</code></pre>
 </td>
 </tr><tr class="filename"><td><h2 id="lib/renderFunctions.js"><a href="#">renderFunctions</a></h2></td><td>lib/renderFunctions.js</td></tr><tr class="code">
+<td class="docs">
+<p>Tags to self-close (see http://www.w3schools.com/tags/default.asp)
+ </p>
+</td>
+<td class="code">
+<pre><code><span class="keyword">var</span> <span class="variable">selfClosingTags</span> = [&<span class="variable">quot</span>;<span class="variable">area</span>&<span class="variable">quot</span>;, &<span class="variable">quot</span>;<span class="variable">base</span>&<span class="variable">quot</span>;, &<span class="variable">quot</span>;<span class="variable">basefont</span>&<span class="variable">quot</span>;, &<span class="variable">quot</span>;<span class="variable">br</span>&<span class="variable">quot</span>;, &<span class="variable">quot</span>;<span class="variable">col</span>&<span class="variable">quot</span>;, &<span class="variable">quot</span>;<span class="variable">frame</span>&<span class="variable">quot</span>;, &<span class="variable">quot</span>;<span class="variable">hr</span>&<span class="variable">quot</span>;, &<span class="variable">quot</span>;<span class="variable">img</span>&<span class="variable">quot</span>;, &<span class="variable">quot</span>;<span class="variable">input</span>&<span class="variable">quot</span>;, &<span class="variable">quot</span>;<span class="variable">link</span>&<span class="variable">quot</span>;, &<span class="variable">quot</span>;<span class="variable">meta</span>&<span class="variable">quot</span>;, &<span class="variable">quot</span>;<span class="variable">param</span>&<span class="variable">quot</span>;];</code></pre>
+</td>
+</tr>
+<tr class="code">
 <td class="docs">
 <p>Functions used during rendering
  </p>
 </td>
 <td class="code">
-<pre><code><span class="variable">module</span>.<span class="variable">exports</span> = {
+<pre><code><span class="keyword">var</span> <span class="variable">self</span> = <span class="variable">module</span>.<span class="variable">exports</span> = {
+    <span class="variable">_encode</span>:  <span class="variable">require</span>(<span class="string">'JS-Entities'</span>).<span class="variable">xml</span>.<span class="variable">encode</span>,
     <span class="string">'_'</span>: <span class="variable">require</span>(<span class="string">'underscore'</span>),
     <span class="variable">_mergeAttributes</span>: <span class="keyword">function</span>(<span class="variable">tagAttributes</span>, <span class="variable">contextAttributes</span>, <span class="variable">definedKeys</span>) {
-        <span class="keyword">if</span> (<span class="keyword">typeof</span>(<span class="variable">tagAttributes</span>[<span class="string">'merge-attrs'</span>].<span class="variable">split</span>) == <span class="string">'function'</span>) {
+        <span class="keyword">if</span> (<span class="keyword">typeof</span>(<span class="variable">tagAttributes</span>[<span class="string">'merge-attrs'</span>].<span class="variable">split</span>) == <span class="string">'function'</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="keyword">typeof</span>(<span class="variable">contextAttributes</span>) == <span class="string">'object'</span>) {
             <span class="keyword">var</span> <span class="variable">mergeKeys</span> = <span class="variable">tagAttributes</span>[<span class="string">'merge-attrs'</span>].<span class="variable">split</span>(<span class="string">','</span>),
                 <span class="variable">allKeys</span> = <span class="class">Object</span>.<span class="variable">keys</span>(<span class="variable">contextAttributes</span>);
             <span class="keyword">delete</span>(<span class="variable">tagAttributes</span>[<span class="string">'merge-attrs'</span>]);
@@ -461,8 +520,20 @@ code .this { color: #19469D; }</style>
             <span class="keyword">var</span> <span class="variable">includeAll</span> = (<span class="variable">mergeKeys</span>.<span class="variable">indexOf</span>(<span class="string">''</span>) &<span class="variable">gt</span>; -<span class="number integer">1</span>);
             
             <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">attr</span> <span class="keyword">in</span> <span class="variable">contextAttributes</span>) {
-                <span class="keyword">if</span> ((<span class="variable">includeAll</span> || <span class="variable">mergeKeys</span>.<span class="variable">indexOf</span>(<span class="variable">attr</span>) &<span class="variable">gt</span>; -<span class="number integer">1</span> || (<span class="variable">includeUnspecified</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">definedKeys</span>.<span class="variable">indexOf</span>(<span class="variable">attr</span>) == -<span class="number integer">1</span>)) &<span class="variable">amp</span>;&<span class="variable">amp</span>; !<span class="variable">tagAttributes</span>[<span class="variable">attr</span>] &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">contextAttributes</span>[<span class="variable">attr</span>]) 
+                <span class="keyword">if</span> (<span class="variable">mergeKeys</span>.<span class="variable">indexOf</span>(<span class="variable">attr</span>) &<span class="variable">gt</span>; -<span class="number integer">1</span> || (<span class="variable">attr</span> != <span class="string">'class'</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; (<span class="variable">includeAll</span> || (<span class="variable">includeUnspecified</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">definedKeys</span>.<span class="variable">indexOf</span>(<span class="variable">attr</span>) == -<span class="number integer">1</span>))) &<span class="variable">amp</span>;&<span class="variable">amp</span>; !<span class="variable">tagAttributes</span>[<span class="variable">attr</span>] &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">contextAttributes</span>[<span class="variable">attr</span>]) 
                     <span class="variable">tagAttributes</span>[<span class="variable">attr</span>] = <span class="variable">contextAttributes</span>[<span class="variable">attr</span>];
+            }
+        }
+    },
+    <span class="variable">_mergeClassAttribute</span>: <span class="keyword">function</span>(<span class="variable">tagAttributes</span>, <span class="variable">contextAttributes</span> ) {
+        <span class="keyword">var</span> <span class="variable">classAttribute</span> = <span class="variable">tagAttributes</span>[<span class="string">'merge-class'</span>],
+            <span class="variable">contextClassAttribute</span> = <span class="variable">contextAttributes</span>[<span class="string">'class'</span>];
+        <span class="keyword">delete</span>(<span class="variable">tagAttributes</span>[<span class="string">'merge-class'</span>]);
+        <span class="keyword">if</span> (<span class="variable">self</span>.<span class="variable">_</span>.<span class="variable">isString</span>(<span class="variable">classAttribute</span>)) {
+            <span class="keyword">if</span> (<span class="variable">self</span>.<span class="variable">_</span>.<span class="variable">isString</span>(<span class="variable">contextClassAttribute</span>) ) {
+                <span class="variable">tagAttributes</span>[<span class="string">'class'</span>] = <span class="variable">self</span>.<span class="variable">_</span>.<span class="variable">uniq</span>(<span class="variable">self</span>.<span class="variable">_</span>.<span class="variable">select</span>(<span class="variable">contextClassAttribute</span>.<span class="variable">split</span>(<span class="string">' '</span>).<span class="variable">concat</span>(<span class="variable">classAttribute</span>.<span class="variable">split</span>(<span class="string">' '</span>)), <span class="keyword">function</span>(<span class="variable">v</span>){<span class="keyword">return</span> <span class="variable">v</span>;})).<span class="variable">join</span>(<span class="string">' '</span>);
+            } <span class="keyword">else</span> {
+                <span class="variable">tagAttributes</span>[<span class="string">'class'</span>] = <span class="variable">classAttribute</span>;
             }
         }
     },
@@ -489,7 +560,7 @@ code .this { color: #19469D; }</style>
 
             <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">attr</span> <span class="keyword">in</span> <span class="variable">attributes</span>) {
                 <span class="keyword">if</span> (<span class="variable">attributes</span>[<span class="variable">attr</span>] != <span class="keyword">null</span>) {
-                    <span class="variable">attributesStr</span> = <span class="variable">attributesStr</span>.<span class="variable">concat</span>(<span class="variable">attr</span> + <span class="string">'=&quot;'</span> + <span class="variable">attributes</span>[<span class="variable">attr</span>] + <span class="string">'&quot; '</span>);
+                    <span class="variable">attributesStr</span> = <span class="variable">attributesStr</span>.<span class="variable">concat</span>(<span class="variable">attr</span> + <span class="string">'=&quot;'</span> + <span class="variable">self</span>.<span class="variable">_encode</span>(<span class="variable">attributes</span>[<span class="variable">attr</span>]) + <span class="string">'&quot; '</span>);
                 }
             }
             <span class="keyword">if</span> (<span class="variable">attributesStr</span>.<span class="variable">length</span> &<span class="variable">gt</span>; <span class="number integer">0</span>) <span class="variable">attributesStr</span> = <span class="string">' '</span> + <span class="variable">attributesStr</span>.<span class="variable">trim</span>();
@@ -498,9 +569,24 @@ code .this { color: #19469D; }</style>
                 <span class="variable">callback</span>.<span class="variable">call</span>(<span class="variable">context</span>);
                 <span class="variable">buffer</span>.<span class="variable">print</span>(<span class="string">'&lt;/'</span> + <span class="variable">name</span> + <span class="string">'&gt;'</span>);
             } <span class="keyword">else</span> {
-                <span class="variable">buffer</span>.<span class="variable">print</span>(<span class="string">'&lt;'</span> + <span class="variable">name</span> + <span class="variable">attributesStr</span> + <span class="string">'/&gt;'</span>);
+                <span class="keyword">if</span> (<span class="variable">selfClosingTags</span>.<span class="variable">indexOf</span>(<span class="variable">name</span>) &<span class="variable">gt</span>; -<span class="number integer">1</span>) {
+                    <span class="variable">buffer</span>.<span class="variable">print</span>(<span class="string">'&lt;'</span> + <span class="variable">name</span> + <span class="variable">attributesStr</span> + <span class="string">'/&gt;'</span>);
+                } <span class="keyword">else</span> {
+                    <span class="variable">buffer</span>.<span class="variable">print</span>(<span class="string">'&lt;'</span> + <span class="variable">name</span> + <span class="variable">attributesStr</span> + <span class="string">'&gt;&lt;/'</span> + <span class="variable">name</span> + <span class="string">'&gt;'</span>);
+                }
+                
             }
         }
+    },
+    <span class="variable">_clone</span>: <span class="keyword">function</span>(<span class="variable">obj</span>, <span class="variable">mergeObj</span>) {
+        <span class="keyword">var</span> <span class="variable">out</span> = <span class="variable">self</span>.<span class="variable">_</span>.<span class="variable">clone</span>(<span class="variable">obj</span>);
+        
+        <span class="keyword">if</span> (<span class="keyword">typeof</span>(<span class="variable">mergeObj</span>) === <span class="string">'object'</span>) {
+            <span class="keyword">for</span> (<span class="variable">i</span> <span class="keyword">in</span> <span class="variable">mergeObj</span>) {
+                <span class="variable">out</span>[<span class="variable">i</span>] = <span class="variable">arguments</span>.<span class="variable">callee</span>(<span class="variable">mergeObj</span>[<span class="variable">i</span>]);
+            }            
+        }
+        <span class="keyword">return</span> <span class="variable">out</span>;
     },
     <span class="variable">_deepCopy</span>: <span class="keyword">function</span>(<span class="variable">obj</span>, <span class="variable">mergeObj</span>) {
         <span class="keyword">if</span> (<span class="class">Object</span>.<span class="variable">prototype</span>.<span class="variable">toString</span>.<span class="variable">call</span>(<span class="variable">obj</span>) === <span class="string">'[object Array]'</span>) {
@@ -515,13 +601,18 @@ code .this { color: #19469D; }</style>
         <span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="variable">obj</span> === <span class="string">'object'</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">obj</span> != <span class="keyword">null</span>) {
             <span class="keyword">var</span> <span class="variable">out</span> = {},
                 <span class="variable">i</span>;
-            <span class="keyword">for</span> (<span class="variable">i</span> <span class="keyword">in</span> <span class="variable">obj</span>) {
-                <span class="variable">out</span>[<span class="variable">i</span>] = <span class="variable">arguments</span>.<span class="variable">callee</span>(<span class="variable">obj</span>[<span class="variable">i</span>]);
-            }
+
             <span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="variable">mergeObj</span> === <span class="string">'object'</span>) {
+                <span class="keyword">for</span> (<span class="variable">i</span> <span class="keyword">in</span> <span class="variable">obj</span>) {
+                    <span class="variable">out</span>[<span class="variable">i</span>] = <span class="variable">arguments</span>.<span class="variable">callee</span>(<span class="variable">obj</span>[<span class="variable">i</span>]);
+                }
                 <span class="keyword">for</span> (<span class="variable">i</span> <span class="keyword">in</span> <span class="variable">mergeObj</span>) {
                     <span class="variable">out</span>[<span class="variable">i</span>] = <span class="variable">arguments</span>.<span class="variable">callee</span>(<span class="variable">mergeObj</span>[<span class="variable">i</span>]);
                 }
+            } <span class="keyword">else</span> {
+                <span class="keyword">for</span> (<span class="variable">i</span> <span class="keyword">in</span> <span class="variable">obj</span>) {
+                    <span class="variable">out</span>[<span class="variable">i</span>] = <span class="variable">obj</span>[<span class="variable">i</span>];
+                }                
             }
             <span class="keyword">return</span> <span class="variable">out</span>;
         }
@@ -544,14 +635,12 @@ code .this { color: #19469D; }</style>
 
     <span class="keyword">switch</span> (<span class="variable">type</span>) {
     <span class="keyword">case</span> <span class="string">'page'</span>:
-        <span class="variable">tmp</span> = [&<span class="variable">quot</span>;<span class="keyword">try</span> { <span class="keyword">with</span>(<span class="variable">_renderFunctions</span>) { <span class="keyword">with</span> (<span class="variable">_deepCopy</span>(<span class="variable">locals</span>, { <span class="variable">_attributes</span>:{} })) {&<span class="variable">quot</span>;];
+        <span class="variable">tmp</span> = [&<span class="variable">quot</span>;<span class="keyword">try</span> { <span class="keyword">with</span>(<span class="variable">_renderFunctions</span>) { <span class="keyword">with</span> (<span class="variable">_clone</span>(<span class="variable">locals</span>, { <span class="variable">attributes</span>: <span class="variable">locals</span>, <span class="variable">_attributes</span>:{} })) { &<span class="variable">quot</span>;];
         <span class="variable">end</span> = [<span class="string">'}} buffer.end(); } catch (err) { buffer.error(err); }'</span>];
-        <span class="variable">tmp</span> = [&<span class="variable">quot</span>;<span class="keyword">with</span>(<span class="variable">_renderFunctions</span>) { <span class="keyword">with</span> (<span class="variable">_deepCopy</span>(<span class="variable">locals</span>, { <span class="variable">_attributes</span>:{} })) {&<span class="variable">quot</span>;];
-        <span class="variable">end</span> = [<span class="string">'}} buffer.end();'</span>];
         <span class="keyword">break</span>;
     <span class="keyword">case</span> <span class="string">'definition'</span>:
-        <span class="variable">tmp</span> = [&<span class="variable">quot</span>;<span class="keyword">with</span>(<span class="variable">_renderFunctions</span>) { <span class="keyword">with</span> (<span class="variable">_deepCopy</span>(<span class="variable">attributes</span>, { <span class="variable">_attributes</span>:{} })) {&<span class="variable">quot</span>;];
-        <span class="variable">end</span> = [<span class="string">'}}'</span>];
+        <span class="variable">tmp</span> = [&<span class="variable">quot</span>;<span class="keyword">try</span> { <span class="keyword">with</span>(<span class="variable">_renderFunctions</span>) { <span class="keyword">with</span> (<span class="variable">_clone</span>(<span class="variable">attributes</span>, { <span class="variable">_attributes</span>:{} })) { &<span class="variable">quot</span>;];
+        <span class="variable">end</span> = [<span class="string">'}}} catch (err) { buffer.error(err); }'</span>];
         <span class="keyword">break</span>;
     <span class="keyword">default</span>:
         <span class="variable">tmp</span> = [&<span class="variable">quot</span>;<span class="keyword">with</span> ({ <span class="variable">_attributes</span>:{} }) {&<span class="variable">quot</span>;];
@@ -565,7 +654,7 @@ code .this { color: #19469D; }</style>
 
         <span class="keyword">switch</span> (<span class="variable">tag</span>.<span class="variable">type</span>) {
         <span class="keyword">case</span> <span class="string">'text'</span>:
-            <span class="variable">tmp</span>.<span class="variable">push</span>(<span class="string">'buffer.print(unescape(&quot;'</span> + <span class="variable">escape</span>(<span class="variable">tag</span>.<span class="variable">content</span>) + <span class="string">'&quot;));'</span>);
+            <span class="variable">tmp</span>.<span class="variable">push</span>(<span class="string">'buffer.print(unescape(&quot;'</span> + <span class="variable">escape</span>(<span class="variable">tag</span>.<span class="variable">content</span>) + <span class="string">'&quot;), '</span> + ((<span class="variable">options</span>.<span class="variable">encodeEntities</span> === <span class="variable">true</span>) ? <span class="string">'_encode'</span> : <span class="string">'null'</span>) + <span class="string">');'</span>);
             <span class="keyword">break</span>;
         <span class="keyword">case</span> <span class="string">'comment'</span>:
             <span class="variable">tmp</span>.<span class="variable">push</span>(<span class="string">'buffer.print(unescape(&quot;'</span> + <span class="variable">escape</span>(<span class="string">'&lt;!-- '</span> + <span class="variable">tag</span>.<span class="variable">content</span>.<span class="variable">trim</span>() + <span class="string">' --&gt;'</span>) + <span class="string">'&quot;));'</span>);
@@ -623,15 +712,20 @@ code .this { color: #19469D; }</style>
                     <span class="keyword">var</span> <span class="variable">attr</span> = <span class="variable">tag</span>.<span class="variable">attrs</span>[<span class="variable">key</span>];
                     <span class="keyword">if</span> (<span class="variable">attr</span>[<span class="variable">attr</span>.<span class="variable">length</span> - <span class="number integer">1</span>] == <span class="string">'}'</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">attr</span>.<span class="variable">indexOf</span>(<span class="string">'%{'</span>) === <span class="number integer">0</span>) {
                         <span class="variable">tmp</span>.<span class="variable">push</span>(<span class="string">'&quot;'</span> + <span class="variable">key</span> + <span class="string">'&quot;: ('</span> + <span class="variable">attr</span>.<span class="variable">slice</span>(<span class="number integer">2</span>, <span class="variable">attr</span>.<span class="variable">length</span> - <span class="number integer">1</span>) + <span class="string">'), '</span>);
+                    } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">attr</span>[<span class="variable">attr</span>.<span class="variable">length</span> - <span class="number integer">1</span>] == <span class="string">'}'</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">attr</span>.<span class="variable">indexOf</span>(<span class="string">'#{'</span>) === <span class="number integer">0</span>) {
+                        <span class="variable">tmp</span>.<span class="variable">push</span>(<span class="string">'&quot;'</span> + <span class="variable">key</span> + <span class="string">'&quot;: buffer.error(new Error(&quot;#{} encountered&quot;)), '</span>);
                     } <span class="keyword">else</span> {
                         <span class="variable">tmp</span>.<span class="variable">push</span>(<span class="string">'&quot;'</span> + <span class="variable">key</span> + <span class="string">'&quot;: unescape(&quot;'</span> + <span class="variable">escape</span>(<span class="variable">attr</span>) + <span class="string">'&quot;), '</span>);
                     }
                 }
                 <span class="variable">tmp</span>.<span class="variable">push</span>(<span class="string">'};'</span>);
+
+                <span class="comment">// Merge class attribute</span>
+                <span class="variable">tmp</span>.<span class="variable">push</span>(<span class="string">'if (typeof(_attributes[&quot;merge-class&quot;]) != &quot;undefined&quot;) _mergeClassAttribute(_attributes, attributes);'</span>)
+                
                 <span class="comment">// Merge attributes</span>
                 <span class="variable">tmp</span>.<span class="variable">push</span>(<span class="string">'if (typeof(_attributes[&quot;merge-attrs&quot;]) != &quot;undefined&quot;) _mergeAttributes(_attributes, attributes, _keys);'</span>)
                 
-                <span class="comment">// if (options.debug) tmp.push('buffer.print(JSON.stringify(_attributes));');</span>
                 <span class="keyword">if</span> (<span class="variable">tag</span>.<span class="variable">children</span> &<span class="variable">amp</span>;&<span class="variable">amp</span>; <span class="variable">tag</span>.<span class="variable">children</span>.<span class="variable">length</span> &<span class="variable">gt</span>; <span class="number integer">0</span>) {
                     <span class="variable">tmp</span>.<span class="variable">push</span>(<span class="string">'_applyTag(this, taglib, &quot;'</span> + <span class="variable">tag</span>.<span class="variable">element</span> + <span class="string">'&quot;, _attributes, buffer, function(){'</span>);
                     <span class="variable">tmp</span>.<span class="variable">push</span>(<span class="variable">toFunctionSource</span>(<span class="variable">tag</span>.<span class="variable">children</span>, <span class="string">'tagbody'</span>, <span class="variable">options</span>));
@@ -675,6 +769,17 @@ code .this { color: #19469D; }</style>
         <span class="variable">children</span>: []
     }],
     <span class="variable">parser</span> = <span class="keyword">new</span> <span class="variable">xml</span>.<span class="class">SaxParser</span>(<span class="keyword">function</span>(<span class="variable">cb</span>) {
+        <span class="keyword">function</span> <span class="variable">onCharacters</span>(<span class="variable">chars</span>) {
+            <span class="variable">chars</span> = (<span class="variable">options</span>.<span class="variable">trimWhitespace</span>) ? <span class="variable">chars</span>.<span class="variable">trim</span>() : <span class="variable">chars</span>;
+            <span class="keyword">if</span> (<span class="variable">chars</span>.<span class="variable">length</span> &<span class="variable">gt</span>; <span class="number integer">0</span>) {
+                <span class="variable">stack</span>[<span class="variable">stack</span>.<span class="variable">length</span> - <span class="number integer">1</span>].<span class="variable">children</span>.<span class="variable">push</span>({
+                    <span class="variable">type</span>: <span class="string">'text'</span>,
+                    <span class="variable">content</span>: <span class="variable">chars</span>,
+                    <span class="variable">line</span>: <span class="variable">parser</span>.<span class="variable">getLineNumber</span>(),
+                    <span class="variable">column</span>: <span class="variable">parser</span>.<span class="variable">getColumnNumber</span>(),
+                });
+            }
+        }
         <span class="variable">cb</span>.<span class="variable">onStartDocument</span>(<span class="keyword">function</span>() {
             <span class="comment">// Ignore</span>
             });
@@ -712,20 +817,8 @@ code .this { color: #19469D; }</style>
 
             <span class="variable">stack</span>[<span class="variable">stack</span>.<span class="variable">length</span> - <span class="number integer">1</span>].<span class="variable">children</span>.<span class="variable">push</span>(<span class="variable">top</span>);
         });
-        <span class="variable">cb</span>.<span class="variable">onCharacters</span>(<span class="keyword">function</span>(<span class="variable">chars</span>) {
-            <span class="variable">chars</span> = (<span class="variable">options</span>.<span class="variable">trimWhitespace</span>) ? <span class="variable">chars</span>.<span class="variable">trim</span>() : <span class="variable">chars</span>;
-            <span class="keyword">if</span> (<span class="variable">chars</span>.<span class="variable">length</span> &<span class="variable">gt</span>; <span class="number integer">0</span>) {
-                <span class="variable">stack</span>[<span class="variable">stack</span>.<span class="variable">length</span> - <span class="number integer">1</span>].<span class="variable">children</span>.<span class="variable">push</span>({
-                    <span class="variable">type</span>: <span class="string">'text'</span>,
-                    <span class="variable">content</span>: <span class="variable">chars</span>,
-                    <span class="variable">line</span>: <span class="variable">parser</span>.<span class="variable">getLineNumber</span>(),
-                    <span class="variable">column</span>: <span class="variable">parser</span>.<span class="variable">getColumnNumber</span>(),
-                });
-            }
-        });
-        <span class="variable">cb</span>.<span class="variable">onCdata</span>(<span class="keyword">function</span>(<span class="variable">cdata</span>) {
-            <span class="comment">// Ignore</span>
-            });
+        <span class="variable">cb</span>.<span class="variable">onCharacters</span>(<span class="variable">onCharacters</span>);
+        <span class="variable">cb</span>.<span class="variable">onCdata</span>(<span class="variable">onCharacters</span>);
         <span class="variable">cb</span>.<span class="variable">onComment</span>(<span class="keyword">function</span>(<span class="variable">msg</span>) {
             <span class="variable">stack</span>[<span class="variable">stack</span>.<span class="variable">length</span> - <span class="number integer">1</span>].<span class="variable">children</span>.<span class="variable">push</span>({
                 <span class="variable">type</span>: <span class="string">'comment'</span>,

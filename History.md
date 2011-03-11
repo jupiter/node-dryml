@@ -1,3 +1,9 @@
+0.1.9 / 2011-03-04 
+==================
+
+  * Updated package.json for latest npm version
+  * Regenerated API docs
+
 0.1.8 / 2011-03-04 
 ==================
 

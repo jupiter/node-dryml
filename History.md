@@ -1,3 +1,9 @@
+0.1.12 / 2011-03-11
+===================
+
+  * Fix: Multiple calls of rendering callback
+  * TODO: `repeat` tag must ignore inherited properties on objects
+  
 0.1.11 / 2011-03-11
 ===================
 

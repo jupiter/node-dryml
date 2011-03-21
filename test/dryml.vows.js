@@ -229,6 +229,19 @@ vows.describe('dryml').addBatch({
                 assert.includes(buffer.str, '<p>After</p>');
             },
         },
+        'can call tagbody': {
+            topic: function() {
+                ejs.render('<def tag="after"><%? setTimeout(function(){ tagbody.call(this, buffer) }, 100) %></def><html><after>Print Me<% buffer.end() %></after></html>',
+                {
+                    locals: {},
+                    debug: false
+                },
+                this.callback)
+            },
+            'from within a defined tag': function(err, buffer) {
+                assert.includes(buffer.str, '<htfml>Print Me</html>');
+            }
+        }
     },
     'attribute tags': {
         'can contain ejs': {

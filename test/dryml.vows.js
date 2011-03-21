@@ -239,7 +239,7 @@ vows.describe('dryml').addBatch({
                 this.callback)
             },
             'from within a defined tag': function(err, buffer) {
-                assert.includes(buffer.str, '<htfml>Print Me</html>');
+                assert.includes(buffer.str, '<html>Print Me</html>');
             }
         }
     },

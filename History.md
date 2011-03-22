@@ -1,3 +1,8 @@
+0.1.13 / 2011-03-22
+===================
+
+  * `with` tag can map asynchronous callback variables to tagbody context
+  
 0.1.12 / 2011-03-21
 ===================
 

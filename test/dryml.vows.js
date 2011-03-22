@@ -159,7 +159,30 @@ vows.describe('dryml').addBatch({
             'nested inside defined tag tagbody': function(err, buffer) {
                 assert.includes(buffer.str, '<p><div class="slot">Yeah!</div></p>');
             },
-        }
+        },
+        'with obj attribute on `with` tag': {
+            topic: function() {
+                ejs.render('<taglib src="simple.taglib"/><p><with obj="%{ someObj }">Print this:<%= this %></with></p><p><with obj="Yeah!">No, print this:<em><%= this %></em></with></p><coinslot obj="%{ someObj }"><%= this %></coinslot><with obj="%{ someObj }"><p><coinslot><%= this %></coinslot></p></with>',
+                {
+                    locals: {
+                        someObj: 'Yeah!'
+                    }
+                },
+                this.callback)
+            },
+            'at base level of tagbody': function(err, buffer) {
+                assert.includes(buffer.str, '<p>Print this:Yeah!</p>');
+            },
+            'at first html level': function(err, buffer) {
+                assert.includes(buffer.str, '<p>No, print this:<em>Yeah!</em></p>');
+            },
+            'inside defined tag tagbody': function(err, buffer) {
+                assert.includes(buffer.str, '<div class="slot">Yeah!</div>');
+            },
+            'nested inside defined tag tagbody': function(err, buffer) {
+                assert.includes(buffer.str, '<p><div class="slot">Yeah!</div></p>');
+            },
+        }        
     },
     'pass attributes': {
         'which are defined': {
@@ -241,6 +264,38 @@ vows.describe('dryml').addBatch({
             'from within a defined tag': function(err, buffer) {
                 assert.includes(buffer.str, '<html>Print Me</html>');
             }
+        },
+        'can be called using `with` tag': {
+            topic: function() {
+                ejs.render('<html><with async="%{ setTimeout(function(){ tagbody(\'a\', \'b\') }, 100) }" attrs="first,second">First: <%= first %><br/>Second: <%= second %><end/></with></html>',
+                {
+                    locals: {},
+                    debug: false
+                },
+                this.callback)
+            },
+            'mapping callback variables to defined attributes': function(err, buffer) {
+                assert.includes(buffer.str, '<html>First: a<br/>Second: b</html>');
+            }        
+        }
+    },
+    '`with` tag': {
+        'defines attributes as variables': {
+            topic: function() {
+                ejs.render('<html><% var first = "z", third = "c" %><with attrs="first,second"><% first = "a"; %>First: <%= first %><br/>Second: <%= second %><br/>Third: <%= third %></with><br/>After: <%= first %></html>',
+                {
+                    locals: {},
+                    debug: false
+                },
+                this.callback)
+            },
+            'only within the tag context': function(err, buffer) {
+                assert.includes(buffer.str, 'First: a');
+                assert.includes(buffer.str, 'After: z');
+            },
+            'and keeps parent context variables accessible': function(err, buffer) {
+                assert.includes(buffer.str, 'Third: c');
+            }            
         }
     },
     'attribute tags': {

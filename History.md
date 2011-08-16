@@ -1,5 +1,10 @@
 0.1.14 / 2011-03-24
 ===================
+
+  * NPM, Node and express compatibility updates
+
+0.1.14 / 2011-03-24
+===================
  
   * Buffer replacements:
     - repeated to maximum async buffer depth, dynamic

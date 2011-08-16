@@ -1,12 +1,12 @@
 <def tag="do"><tagbody/></def>
-<def tag="with"><tagbody/></def>
 <def tag="if" attrs="test"><% buffer.lastIf = test; if (buffer.lastIf) { buffer.startIfContext(); %><tagbody/><% buffer.endIfContext(); } %></def>
 <def tag="else" attrs="test"><% buffer.lastIf = (!buffer.lastIf && (test || test == null)); if (buffer.lastIf) { buffer.startIfContext(); %><tagbody/><% buffer.endIfContext(); } %></def>
-<def tag="repeat">
+<def tag="repeat" attrs="key,value">
 <if test="%{ this &amp;&amp; typeof(this) == 'object' }"><% 
     var i = 0, keys = Object.keys(this);
-    for (var key in this) { 
-        %><do obj="%{ {key: key, value: this[key], i: i++, isFirst:i === 1, isLast: i == keys.length} }"><tagbody/></do><% 
+    for (var innerKey in this) { 
+        %><with obj="%{ {key: ((key) ? this[innerKey][key] : innerKey), value: ((value) ? this[innerKey][value] : this[innerKey]), i: i++, isFirst:i === 1, isLast: i == keys.length} }"><tagbody/></with><% 
     } %>
 </if>
 </def>
+<def tag="end"><% buffer.end() %></def>

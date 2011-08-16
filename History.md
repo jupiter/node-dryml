@@ -1,7 +1,26 @@
+0.1.15 / 2011-03-24
+===================
+
+  * NPM, Node and express compatibility updates
+
+0.1.14 / 2011-03-24
+===================
+ 
+  * Buffer replacements:
+    - repeated to maximum async buffer depth, dynamic
+    - replace all instances, not only the first  
+  * Fix: `withBody` lost scope when called from asynchronous callback
+  * `repeat` tag can map keys and values from objects in an array
+  
+0.1.13 / 2011-03-22
+===================
+
+  * `with` tag can map asynchronous callback variables to tagbody context
+  
 0.1.12 / 2011-03-21
 ===================
 
-  * Fix: Multiple calls of rendering callback
+  * Fixed multiple calls of rendering callback
   * Allow asynchronous callback of tagbody
   * TODO: `repeat` tag must ignore inherited properties on objects
   

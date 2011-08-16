@@ -267,7 +267,7 @@ vows.describe('dryml').addBatch({
         },
         'can be called using `with` tag': {
             topic: function() {
-                ejs.render('<html><with async="%{ setTimeout(function(){ tagbody(\'a\', \'b\') }, 100) }" attrs="first,second">First: <%= first %><br/>Second: <%= second %><end/></with></html>',
+                ejs.render('<html><with async="%{ setTimeout(function(){ withBody(\'a\', \'b\') }, 100) }" attrs="first,second">First: <%= first %><br/>Second: <%= second %><end/></with></html>',
                 {
                     locals: {},
                     debug: false

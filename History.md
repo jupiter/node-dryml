@@ -1,3 +1,10 @@
+0.2.0 / 2011-09-23
+===================
+
+  * Fixed issues related to core tags `if` and `else`
+  * Changed core tag `repeat` to use underscore.js
+  * Exposed renderFunctions to allow insertion of global view functions/helpers
+  
 0.1.15 / 2011-03-24
 ===================
 

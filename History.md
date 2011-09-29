@@ -1,5 +1,12 @@
+0.2.1 / 2011-09-29
+==================
+
+  * Enable custom prefix on Buffer.newFieldId()
+  * Catch and amend errors with failing source on function compile
+  * Enable unclosed tags for output (input still needs to conform to XML)
+
 0.2.0 / 2011-09-23
-===================
+==================
 
   * Fixed issues related to core tags `if` and `else`
   * Changed core tag `repeat` to use underscore.js

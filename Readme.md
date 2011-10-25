@@ -60,6 +60,8 @@ Defining a tag (like a inline partial, to be reused):
       </html>
     </def>
     
+Note: Tags can be defined with/without prefixes, e.g.  `<myns:def tag="img">` is called by using `<myns:img>` is called, and `<def tag="image">` is called by using `<image>` (standard HTML tag names not allowed)
+    
 Using a tag:
     
     <page title="Welcome" class="welcome">
@@ -106,16 +108,16 @@ Output:
 
 Defining multiple tags (in separate taglib file):
 
-    <def tag="navigation" attrs="options,selected">
+    <x:def tag="navigation" attrs="options,selected">
       <ul>
         <% for (var key in options) { %>
             <li class="%{ (key == selected) ? 'selected' : '' }"><a href="#{ '/' + key }"><%= options[key] %></a></li>
         <% } %>
         <tagbody/>
       </ul>
-    </def>
+    </x:def>
 
-    <def tag="page" attrs="title,navigation">
+    <x:def tag="page" attrs="title,navigation">
       <html>
         <head>
           <title><%= title %></title>
@@ -130,7 +132,7 @@ Defining multiple tags (in separate taglib file):
            </div>
         </body>
       </html>
-    </def>   
+    </x:def>   
     
 Using a tag:
 
@@ -162,7 +164,6 @@ Example:
 
 
 This applies only to 'hardcoded' content/values in the DRYML templates and does *not* apply to dynamically generated content.
-    
 
 ## License 
 

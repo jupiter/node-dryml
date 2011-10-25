@@ -475,5 +475,33 @@ vows.describe('dryml').addBatch({
                 }
             }                      
         }
-    },    
+    }, 
+    'namespaced tag': {
+        'in same taglib as similarly named tag': {
+            topic: function() {
+                ejs.render('<taglib src="simple.taglib"/><body><x:namespaced /></body>', {},
+                this.callback)
+            },
+            'should return the right body': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<h1>X</h1>');
+                }
+            }                     
+        },
+        'in same taglib as another similarly named tag': {
+            topic: function() {
+                ejs.render('<taglib src="simple.taglib"/><body><y:namespaced /></body>', {},
+                this.callback)
+            },
+            'should return the right body': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<h1>Y</h1>');
+                }
+            }                     
+        }        
+    },       
 }).export(module);

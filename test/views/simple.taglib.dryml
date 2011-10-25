@@ -32,3 +32,12 @@
 <def tag="class-tag">
     <a merge-class="blue disabled"><tagbody/></a>
 </def>
+<def tag="namespaced">
+    <h1>None</h1>
+</def>
+<x:def tag="namespaced">
+    <h1>X</h1>
+</x:def>
+<y:def tag="namespaced">
+    <h1>Y</h1>
+</y:def>

@@ -436,13 +436,14 @@ vows.describe('dryml').addBatch({
             }
         }        
     },
-    'entities are escapes': {
+    'entities are escaped': {
         'in': {
             topic: function() {
                 ejs.render('<p align="center">"Some" &lt; \'Any\'; None > &amp;</p>' +
                 '<p oper="1 &gt; 1">Nevermind</p>' + 
                 '<p atu="%{ \'Ben &amp; Jerry\' }">Boo!</p>' +
-                '<p><%= _encode(\'Ben & Jerry\') %></p>',                 
+                '<p><%= \'Kenneth & Clark\' %></p>' + 
+                '<p><%- _encode(\'Ben & Jerry\') %></p>',                 
                 { encodeEntities: true },
                 this.callback);
             },
@@ -466,16 +467,71 @@ vows.describe('dryml').addBatch({
                 } else {
                     assert.includes(buffer.str, '<p atu="Ben &amp; Jerry">Boo!</p>');
                 }
-            },            
+            },
+            'with standard equals output': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<p>Kenneth &amp; Clark</p>');
+                }
+            },                      
             'with _encode() in ejs': function(err, buffer) {
                 if (err) {
                     throw err;
                 } else {
                     assert.includes(buffer.str, '<p>Ben &amp; Jerry</p>');
                 }
-            }                      
+            }                 
         }
-    }, 
+    },
+    'entities are not escaped': {
+        'in': {
+            topic: function() {
+                ejs.render('<p align="center">"Some" &lt; \'Any\'; None > &amp;</p>' +
+                '<p oper="1 &gt; 1">Nevermind</p>' + 
+                '<p atu="%{ \'Ben &amp; Jerry\' }">Boo!</p>' +
+                '<p><%= \'Kenneth & Clark\' %></p>' + 
+                '<p><%- _encode(\'Ben & Jerry\') %></p>',                 
+                { encodeEntities: false },
+                this.callback);
+            },
+            'text': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<p align="center">"Some" < \'Any\'; None > &</p>');
+                }
+            },
+            'simple attributes': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<p oper="1 &gt; 1">Nevermind</p>');
+                }
+            },
+            'in ejs attribute': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<p atu="Ben &amp; Jerry">Boo!</p>');
+                }
+            },
+            'with standard equals output': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<p>Kenneth & Clark</p>');
+                }
+            },                      
+            'with _encode() in ejs': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<p>Ben &amp; Jerry</p>');
+                }
+            }                 
+        }
+    },    
     'namespaced tag': {
         'in same taglib as similarly named tag': {
             topic: function() {

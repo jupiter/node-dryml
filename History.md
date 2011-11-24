@@ -1,3 +1,8 @@
+0.2.3 / 2011-10-25
+==================
+
+  * By default encode entities in <%= %> tags, use <%- %> to skip encoding
+
 0.2.2 / 2011-10-25
 ==================
 

@@ -1,0 +1,40 @@
+<taglib src="sub/benchmark.taglib" />
+
+<repeat obj="%{ 'Nullam id dolor ultricies.'.split(' ') }">
+  <div style="background-color: red">
+    <repeat obj="%{ this.value.split('') }">
+      <div class="boxed">
+        <with obj="%{ this.value }">
+          <iffies two="%{ 'word' }" three="%{ ['a', 'b', 'c'] }" four="%{ 4 }">
+            <attr:one><h1><%= this %></h1></attr:one>
+            Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nulla vitae elit libero, a pharetra augue. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean lacinia bibendum nulla sed consectetur.
+          </iffies>
+          <iffies two="%{ 'word' }" three="%{ ['a', 'b', 'c'] }" five="%{ 5 }">
+            <attr:one><h1><%= this %></h1></attr:one>
+            Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nulla vitae elit libero, a pharetra augue. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean lacinia bibendum nulla sed consectetur.
+          </iffies>
+        </with>
+      </div>
+      <div class="quartered" obj="%{ this.value }">
+        <iffies two="%{ 'word' }" three="%{ ['a', 'b', 'c'] }" four="%{ 4 }">
+          <attr:one><h1><%= this %></h1></attr:one>
+          Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nulla vitae elit libero, a pharetra augue. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean lacinia bibendum nulla sed consectetur.
+        </iffies>
+        <iffies two="%{ 'word' }" three="%{ ['a', 'b', 'c'] }" five="%{ 5 }">
+          <attr:one><h1><%= this %></h1></attr:one>
+          Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nulla vitae elit libero, a pharetra augue. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean lacinia bibendum nulla sed consectetur.
+        </iffies>
+      </div>      
+      <div class="gammarayed">
+        <iffies two="%{ 'word' }" three="%{ ['a', 'b', 'c'] }" four="%{ 4 }" class="rock solid">
+          <attr:one><h1><%= this %></h1></attr:one>
+          Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nulla vitae elit libero, a pharetra augue. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean lacinia bibendum nulla sed consectetur.
+        </iffies>
+        <iffies two="%{ 'word' }" three="%{ ['a', 'b', 'c'] }" five="%{ 5 }" class="rock solid">
+          <attr:one><h1><%= this %></h1></attr:one>
+          Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nulla vitae elit libero, a pharetra augue. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean lacinia bibendum nulla sed consectetur.
+        </iffies>
+      </div>      
+    </repeat>
+  </div>
+</repeat>

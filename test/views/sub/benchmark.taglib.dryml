@@ -1,0 +1,54 @@
+<taglib src="nested.taglib" />
+
+<def tag="iffy" attrs="two,three,four,five">
+  <p><%= this %></p>
+  <p>
+    <%- attributes.one %>
+    <a href="%{ two }"><%= three %></a>
+    <if test="%{ four }">
+      <b><%= four %></b>
+    </if>
+    <else test="%{ five }">
+      <b><%= five %></b>
+    </else>
+    <else>
+      <b>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec ullamcorper nulla non metus auctor fringilla. Nullam id dolor id nibh ultricies vehicula ut id elit. Curabitur blandit tempus porttitor. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</b>
+    </else>
+  </p>
+  <p>
+    <tagbody/>
+  </p>
+</def>
+
+<namespace:def tag="iffy" attrs="two,three,four,five">
+  <p><%= this %></p>
+  <p>
+    <%- attributes.one %>
+    <a href="%{ two }"><%= three %></a>
+    <if test="%{ four }">
+      <egx><%= four %></egx>
+    </if>
+    <else test="%{ five }">
+      <egy><%= five %></egy>
+    </else>
+    <else>
+      <egz>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec ullamcorper nulla non metus auctor fringilla. Nullam id dolor id nibh ultricies vehicula ut id elit. Curabitur blandit tempus porttitor. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</egz>
+    </else>
+  </p>
+  <iffy merge-attrs="two,three,four,five,*">
+    <div merge-class="">
+      <tagbody/>
+    </div>
+  </iffy>
+</namespace:def>
+
+<def tag="egx"><b><tagbody/></b></def>
+<def tag="egy"><b><tagbody/></b></def>
+<def tag="egz"><b><tagbody/></b></def>
+
+<def tag="iffies">
+  <iffy merge-attrs=""><another /></iffy>  
+  <namespace:iffy merge-attrs="" merge-class=""><tagbody/></namespace:iffy>
+</def>
+
+

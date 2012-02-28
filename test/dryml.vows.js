@@ -139,10 +139,12 @@ vows.describe('dryml').addBatch({
         },
         'with obj attribute': {
             topic: function() {
-                ejs.render('<taglib src="simple.taglib"/><p><witho obj="%{ someObj }">Print this:<%= this %></witho></p><p><witho obj="Yeah!">No, print this:<em><%= this %></em></witho></p><coinslot obj="%{ someObj }"><%= this %></coinslot><witho obj="%{ someObj }"><p><coinslot><%= this %></coinslot></p></witho>',
+                ejs.render('<taglib src="simple.taglib"/><p><witho obj="%{ someObj }">Print this:<%= this %></witho></p><p><witho obj="Yeah!">No, print this:<em><%= this %></em></witho></p><coinslot obj="%{ someObj }"><%= this %></coinslot><witho obj="%{ someObj }"><p><coinslot><%= this %></coinslot></p></witho><witho obj="%{ altObj }"><p><coinslot><witho obj="%{ falseObj }"><%= this %></witho></coinslot></p></witho>',
                 {
                     locals: {
-                        someObj: 'Yeah!'
+                        someObj: 'Yeah!',
+                        altObj: 'Nooo!',
+                        falseObj: false
                     }
                 },
                 this.callback)
@@ -159,6 +161,9 @@ vows.describe('dryml').addBatch({
             'nested inside defined tag tagbody': function(err, buffer) {
                 assert.includes(buffer.str, '<p><div class="slot">Yeah!</div></p>');
             },
+            'nested inside another tag with obj attribute': function(err, buffer) {
+                assert.includes(buffer.str, '<p><div class="slot">false</div></p>');
+            }
         },
         'with obj attribute on `with` tag': {
             topic: function() {

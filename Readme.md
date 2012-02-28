@@ -1,4 +1,4 @@
-# DRYML - a template engine ![Project status](http://stillmaintained.com/jupiter/node-dryml.png)
+# DRYML - a template engine ![Project status](https://secure.travis-ci.org/jupiter/node-dryml.png?branch=master)
 
 A template engine for Node and Express that is compatible with EJS <https://github.com/visionmedia/ejs> yet has the power and view refactoring savvy of DRYML. 
 

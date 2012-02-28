@@ -1,3 +1,8 @@
+0.3.1 / 2012-02-28
+==================
+
+  * Fixed issue #1: When obj evaluates to false, parent object is used
+  
 0.3.0 / 2012-01-21
 ==================
 

@@ -1,3 +1,9 @@
+0.3.2 / 2012-02-28
+==================
+
+  * Added support for merging options.globals using a 'merge-globals'
+    attribute, that works in the same way as 'merge-attrs'
+
 0.3.1 / 2012-02-28
 ==================
 

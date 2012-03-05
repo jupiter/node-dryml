@@ -113,6 +113,20 @@ vows.describe('dryml').addBatch({
             'inside defined tag tagbody nested in a defined tag tagbody': function(err, buffer) {
                 assert.includes(buffer.str, '<div class="slot"><div class="slot">Here</div></div>');
             }
+        },
+        'make globals available on buffer': {
+          topic: function() {
+              ejs.render('<p><%= buffer.globals.some %></p>',
+              {
+                  globals: {
+                      'some': "global_variable"
+                  }
+              },
+              this.callback)
+          },
+          'at first html level': function(err, buffer) {
+              assert.includes(buffer.str, '<p>global_variable</p>');
+          },          
         }
     },
     'pass context': {
@@ -272,17 +286,21 @@ vows.describe('dryml').addBatch({
         },
         'can be called using `with` tag': {
             topic: function() {
-                ejs.render('<html><with async="%{ setTimeout(function(){ withBody(\'a\', \'b\') }, 100) }" attrs="first,second">First: <%= first %><br/>Second: <%= second %><end/></with></html>',
+                ejs.render('<html><with async="%{ setTimeout(function(){ withBody(\'a\', \'b\') }, 100) }" attrs="first,second">First: <%= first %><br/>Second: <%= second %><end/></with></html><with async="%{ setTimeout(function(){ withBody() }, 100) }"><%= buffer.globals.some %><end/></with>',
                 {
                     locals: {},
-                    debug: false
+                    debug: false,
+                    globals: { 'some': 'global_variable' }
                 },
                 this.callback)
             },
             'mapping callback variables to defined attributes': function(err, buffer) {
                 assert.includes(buffer.str, '<html>First: a<br/>Second: b</html>');
-            }        
-        }
+            },
+            'with access to globals': function(err, buffer) {
+                assert.includes(buffer.str, 'global_variable');
+            }
+        },
     },
     '`with` tag': {
         'defines attributes as variables': {
@@ -382,6 +400,26 @@ vows.describe('dryml').addBatch({
                     assert.includes(buffer.str, '<div one="aah" two="bee" three="cee" four="dee" five="eee">');
                 }
             }
+        },
+        
+        'from globals': {
+          topic: function() {
+              ejs.render('<def tag="global-merger" attrs="alwaysthere"><%= alwaysthere %></def><html><global-merger merge-globals="" /></html>',
+              {
+                  debug: false,
+                  globals: {
+                    alwaysthere: 'must_be_sonamed'
+                  }
+              },
+              this.callback)
+          },
+          'for all matching globals': function(err, buffer) {
+              if (err) {
+                  throw err;
+              } else {
+                  assert.includes(buffer.str, '<html>must_be_sonamed</html>');
+              }
+          },          
         }
     },
     'class attributes can be merged': {
@@ -564,5 +602,5 @@ vows.describe('dryml').addBatch({
                 }
             }                     
         }        
-    },       
+    }
 }).export(module);

@@ -1,4 +1,4 @@
-# DRYML - a template engine ![Project status](http://stillmaintained.com/jupiter/node-dryml.png)
+# DRYML - a template engine ![Project status](https://secure.travis-ci.org/jupiter/node-dryml.png?branch=master)
 
 A template engine for Node and Express that is compatible with EJS <https://github.com/visionmedia/ejs> yet has the power and view refactoring savvy of DRYML. 
 
@@ -108,16 +108,16 @@ Output:
 
 Defining multiple tags (in separate taglib file):
 
-    <x:def tag="navigation" attrs="options,selected">
+    <def tag="navigation" attrs="options,selected">
       <ul>
         <% for (var key in options) { %>
             <li class="%{ (key == selected) ? 'selected' : '' }"><a href="#{ '/' + key }"><%= options[key] %></a></li>
         <% } %>
         <tagbody/>
       </ul>
-    </x:def>
+    </def>
 
-    <x:def tag="page" attrs="title,navigation">
+    <def tag="page" attrs="title,navigation">
       <html>
         <head>
           <title><%= title %></title>
@@ -132,7 +132,7 @@ Defining multiple tags (in separate taglib file):
            </div>
         </body>
       </html>
-    </x:def>   
+    </def>   
     
 Using a tag:
 

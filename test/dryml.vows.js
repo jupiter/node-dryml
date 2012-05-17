@@ -117,6 +117,20 @@ vows.describe('dryml').addBatch({
             'inside defined tag tagbody nested in a defined tag tagbody': function(err, buffer) {
                 assert.includes(buffer.str, '<div class="slot"><div class="slot">Here</div></div>');
             }
+        },
+        'make globals available on buffer': {
+          topic: function() {
+              ejs.render('<p><%= buffer.globals.some %></p>',
+              {
+                  globals: {
+                      'some': "global_variable"
+                  }
+              },
+              this.callback)
+          },
+          'at first html level': function(err, buffer) {
+              assert.includes(buffer.str, '<p>global_variable</p>');
+          },          
         }
     },
     'pass context': {
@@ -143,10 +157,12 @@ vows.describe('dryml').addBatch({
         },
         'with obj attribute': {
             topic: function() {
-                ejs.render('<taglib src="simple.taglib"/><p><witho obj="%{ someObj }">Print this:<%= this %></witho></p><p><witho obj="Yeah!">No, print this:<em><%= this %></em></witho></p><coinslot obj="%{ someObj }"><%= this %></coinslot><witho obj="%{ someObj }"><p><coinslot><%= this %></coinslot></p></witho>',
+                ejs.render('<taglib src="simple.taglib"/><p><witho obj="%{ someObj }">Print this:<%= this %></witho></p><p><witho obj="Yeah!">No, print this:<em><%= this %></em></witho></p><coinslot obj="%{ someObj }"><%= this %></coinslot><witho obj="%{ someObj }"><p><coinslot><%= this %></coinslot></p></witho><witho obj="%{ altObj }"><p><coinslot><witho obj="%{ falseObj }"><%= this %></witho></coinslot></p></witho>',
                 {
                     locals: {
-                        someObj: 'Yeah!'
+                        someObj: 'Yeah!',
+                        altObj: 'Nooo!',
+                        falseObj: false
                     }
                 },
                 this.callback)
@@ -163,6 +179,9 @@ vows.describe('dryml').addBatch({
             'nested inside defined tag tagbody': function(err, buffer) {
                 assert.includes(buffer.str, '<p><div class="slot">Yeah!</div></p>');
             },
+            'nested inside another tag with obj attribute': function(err, buffer) {
+                assert.includes(buffer.str, '<p><div class="slot">false</div></p>');
+            }
         },
         'with obj attribute on `with` tag': {
             topic: function() {
@@ -320,17 +339,21 @@ vows.describe('dryml').addBatch({
         },
         'can be called using `with` tag': {
             topic: function() {
-                ejs.render('<html><with async="%{ setTimeout(function(){ withBody(\'a\', \'b\') }, 100) }" attrs="first,second">First: <%= first %><br/>Second: <%= second %><end/></with></html>',
+                ejs.render('<html><with async="%{ setTimeout(function(){ withBody(\'a\', \'b\') }, 100) }" attrs="first,second">First: <%= first %><br/>Second: <%= second %><end/></with></html><with async="%{ setTimeout(function(){ withBody() }, 100) }"><%= buffer.globals.some %><end/></with>',
                 {
                     locals: {},
-                    debug: false
+                    debug: false,
+                    globals: { 'some': 'global_variable' }
                 },
                 this.callback)
             },
             'mapping callback variables to defined attributes': function(err, buffer) {
                 assert.includes(buffer.str, '<html>First: a<br/>Second: b</html>');
-            }        
-        }
+            },
+            'with access to globals': function(err, buffer) {
+                assert.includes(buffer.str, 'global_variable');
+            }
+        },
     },
     '`with` tag': {
         'defines attributes as variables': {
@@ -430,6 +453,26 @@ vows.describe('dryml').addBatch({
                     assert.includes(buffer.str, '<div one="aah" two="bee" three="cee" four="dee" five="eee">');
                 }
             }
+        },
+        
+        'from globals': {
+          topic: function() {
+              ejs.render('<def tag="global-merger" attrs="alwaysthere"><%= alwaysthere %></def><html><global-merger merge-globals="" /></html>',
+              {
+                  debug: false,
+                  globals: {
+                    alwaysthere: 'must_be_sonamed'
+                  }
+              },
+              this.callback)
+          },
+          'for all matching globals': function(err, buffer) {
+              if (err) {
+                  throw err;
+              } else {
+                  assert.includes(buffer.str, '<html>must_be_sonamed</html>');
+              }
+          },          
         }
     },
     'class attributes can be merged': {
@@ -489,13 +532,14 @@ vows.describe('dryml').addBatch({
             }
         }        
     },
-    'entities are escapes': {
+    'entities are escaped': {
         'in': {
             topic: function() {
                 ejs.render('<p align="center">"Some" &lt; \'Any\'; None > &amp;</p>' +
                 '<p oper="1 &gt; 1">Nevermind</p>' + 
                 '<p atu="%{ \'Ben &amp; Jerry\' }">Boo!</p>' +
-                '<p><%= _encode(\'Ben & Jerry\') %></p>',                 
+                '<p><%= \'Kenneth & Clark\' %></p>' + 
+                '<p><%- _encode(\'Ben & Jerry\') %></p>',                 
                 { encodeEntities: true },
                 this.callback);
             },
@@ -519,16 +563,71 @@ vows.describe('dryml').addBatch({
                 } else {
                     assert.includes(buffer.str, '<p atu="Ben &amp; Jerry">Boo!</p>');
                 }
-            },            
+            },
+            'with standard equals output': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<p>Kenneth &amp; Clark</p>');
+                }
+            },                      
             'with _encode() in ejs': function(err, buffer) {
                 if (err) {
                     throw err;
                 } else {
                     assert.includes(buffer.str, '<p>Ben &amp; Jerry</p>');
                 }
-            }                      
+            }                 
         }
-    }, 
+    },
+    'entities are not escaped': {
+        'in': {
+            topic: function() {
+                ejs.render('<p align="center">"Some" &lt; \'Any\'; None > &amp;</p>' +
+                '<p oper="1 &gt; 1">Nevermind</p>' + 
+                '<p atu="%{ \'Ben &amp; Jerry\' }">Boo!</p>' +
+                '<p><%= \'Kenneth & Clark\' %></p>' + 
+                '<p><%- _encode(\'Ben & Jerry\') %></p>',                 
+                { encodeEntities: false },
+                this.callback);
+            },
+            'text': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<p align="center">"Some" < \'Any\'; None > &</p>');
+                }
+            },
+            'simple attributes': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<p oper="1 &gt; 1">Nevermind</p>');
+                }
+            },
+            'in ejs attribute': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<p atu="Ben &amp; Jerry">Boo!</p>');
+                }
+            },
+            'with standard equals output': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<p>Kenneth & Clark</p>');
+                }
+            },                      
+            'with _encode() in ejs': function(err, buffer) {
+                if (err) {
+                    throw err;
+                } else {
+                    assert.includes(buffer.str, '<p>Ben &amp; Jerry</p>');
+                }
+            }                 
+        }
+    },    
     'namespaced tag': {
         'in same taglib as similarly named tag': {
             topic: function() {

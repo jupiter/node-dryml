@@ -1,7 +1,23 @@
+0.3.2 / 2012-02-28
+==================
+
+  * Added support for merging options.globals using a 'merge-globals'
+    attribute, that works in the same way as 'merge-attrs'
+
+0.3.1 / 2012-02-28
+==================
+
+  * Fixed issue #1: When obj evaluates to false, parent object is used
+  
 0.3.0 / 2012-01-21
 ==================
 
   * Updated to be compatible with Node 0.6+
+
+0.2.3 / 2011-10-25
+==================
+
+  * By default encode entities in <%= %> tags, use <%- %> to skip encoding
 
 0.2.2 / 2011-10-25
 ==================

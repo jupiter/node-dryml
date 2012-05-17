@@ -8,15 +8,19 @@ ejs.encodeEntities = false;
 vows.describe('dryml').addBatch({
     'define tags': {
         'with simple output': {
-            topic: ejs.render('<def tag="test"><p class="temp">Simple</p></def><body><test/></body>', {},
-            this.callback),
+            topic: function(){
+              ejs.render('<def tag="test"><p class="temp">Simple</p></def><body><test/></body>', {},
+                          this.callback);                        
+            },
             'return': function(buffer) {
                 assert.equal(buffer.str, '<body><p class="temp">Simple</p></body>');
             }
         },
         'that call defined other tags': {
-            topic: ejs.render('<def tag="xheader"><head><title>Something</title></head></def><def tag="test"><xheader/><body><p>Simple</p></body></def><test/>', {},
-            this.callback),
+            topic: function(){
+              ejs.render('<def tag="xheader"><head><title>Something</title></head></def><def tag="test"><xheader/><body><p>Simple</p></body></def><test/>', {},
+                         this.callback);
+            },
             'return': function(buffer) {
                 assert.equal(buffer.str, '<head><title>Something</title></head><body><p>Simple</p></body>');
             }

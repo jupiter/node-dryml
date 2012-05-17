@@ -7,7 +7,7 @@ ejs.encodeEntities = false;
 
 vows.describe('dryml').addBatch({
 	'core dryml tags are included': {
-	    'for if/else tags': {
+	  'for if/else tags': {
 			topic: function(){ ejs.render('<if test="%{ true }">Yes!</if><else>Neh</else><if test="%{ false }">No!</if><else test="%{ false }">Yeh</else><else>Okay</else>', 
 			    { debug: false}, this.callback) },
 			"'if' should be defined": function(err, buffer) {
@@ -25,7 +25,7 @@ vows.describe('dryml').addBatch({
 				assert.ok(buffer.str.indexOf('Yeh') == -1);	    
 			}						
 		},
-	    'for nested if/else tags': {
+	  'for nested if/else tags': {
 			topic: function(){ ejs.render('<if test="%{ true }">Nearly...<if test="%{ false }">Yes!</if></if><else>Neh</else><if test="%{ false }">No!</if><else test="%{ false }">Yeh</else><else>Okay<if test="%{ false }">Never</if><else test="%{ false }">Never</else></else><else>Never</else>', 
 			    { debug: false}, this.callback) },
 			"'if' should work with test attribute": function(err, buffer) {
@@ -66,6 +66,56 @@ vows.describe('dryml').addBatch({
 			    assert.include(buffer.str, '<li class="w first">');
 			    assert.include(buffer.str, '<li class="z last">');
 			}
-		},		
+		},
+    'switch tag matching default case': {
+      topic: function(){
+        ejs.render('<switch test="%{ inputValue }">' +
+                   '<case test="a"><span>A</span></case>' +
+                   '<case test="b"><span>B</span></case>' +
+                   '<default><span>Default</span></default>' +
+                   '</switch>',
+                   {
+                     locals: {
+                       inputValue: 'x'
+                     }
+                   }, this.callback);
+      },
+      "return": function(err, buffer){
+        assert.equal(buffer.str, '<span>Default</span>');
+      }
+    },
+    'switch tag no matching case': {
+      topic: function(){
+        ejs.render('<switch test="%{ inputValue }">' +
+                   '<case test="a"><span>A</span></case>' +
+                   '<case test="b"><span>B</span></case>' +
+                   '</switch>',
+                   {
+                     locals: {
+                       inputValue: 'x'
+                     }
+                   }, this.callback);
+      },
+      "return": function(err, buffer){
+        assert.equal(buffer.str, '');
+      }
+    },
+    'switch tag with matching case': {
+      topic: function(){
+        ejs.render('<switch test="%{ inputValue }">' +
+                   '<case test="a"><span>A</span></case>' +
+                   '<case test="b"><span>B</span></case>' +
+                   '<default><span>Default</span></default>' +
+                   '</switch>',
+                   {
+                     locals: {
+                       inputValue: 'b'
+                     }
+                   }, this.callback);
+      },
+      "return": function(err, buffer){
+        assert.equal(buffer.str, '<span>B</span>');
+      }
+    }  	
 	}
 }).export(module);

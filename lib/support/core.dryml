@@ -10,3 +10,6 @@
 </if>
 </def>
 <def tag="end"><% buffer.end() %></def>
+<def tag="switch" attrs="test"><% buffer.startIfContext(); buffer.lastIf = false; buffer.lastSwitch = test; %><tagbody/><% buffer.endIfContext(); %></def>
+<def tag="case" attrs="test"><% var thisTest = (test == buffer.lastSwitch); if (!buffer.lastIf && thisTest) { buffer.startIfContext(); %><tagbody/><% buffer.endIfContext(); }; buffer.lastIf = buffer.lastIf || thisTest; %></def>
+<def tag="default"><% if (!buffer.lastIf) { buffer.startIfContext(); %><tagbody/><% buffer.endIfContext(); }; buffer.lastIf = true; %></def>

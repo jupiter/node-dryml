@@ -235,13 +235,12 @@ vows.describe('dryml').addBatch({
     'pass attributes (by object)': {
         'which are defined': {
             topic: function() {
-                ejs.render('<taglib src="simple.taglib"/><div><print attrs="%{ printAttrs }">A tagbody.</print></div>',
+                ejs.render('<taglib src="simple.taglib"/><div><print attrs="%{ printAttrs }" second="2nd" third="Third">A tagbody.</print></div>',
                 { 
                   locals: {
                     printAttrs: {
                       first: "First",
-                      second: "Second",
-                      third: "Third"
+                      second: "Second"
                     }                    
                   }
                 },
@@ -259,7 +258,7 @@ vows.describe('dryml').addBatch({
         },
         'which are ad hoc': {
             topic: function() {
-                ejs.render('<taglib src="simple.taglib"/><div><uprint attrs="%{ printAttrs }">A tagbody.</uprint></div>',
+                ejs.render('<taglib src="simple.taglib"/><div><uprint attrs="%{ printAttrs }" second="2nd"><attr:third>Third</attr:third>A tagbody.</uprint></div>',
                 { 
                   locals: {
                     printAttrs: {

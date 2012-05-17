@@ -232,6 +232,56 @@ vows.describe('dryml').addBatch({
             }
         }
     },
+    'pass attributes (by object)': {
+        'which are defined': {
+            topic: function() {
+                ejs.render('<taglib src="simple.taglib"/><div><print attrs="%{ printAttrs }">A tagbody.</print></div>',
+                { 
+                  locals: {
+                    printAttrs: {
+                      first: "First",
+                      second: "Second",
+                      third: "Third"
+                    }                    
+                  }
+                },
+                this.callback)
+            },
+            'at first html level': function(err, buffer) {
+                assert.includes(buffer.str, '<div><first>First</first>');
+            },
+            'at second html level': function(err, buffer) {
+                assert.includes(buffer.str, '<p><second>Second</second></p>');
+            },
+            'inside defined tag tagbody': function(err, buffer) {
+                assert.includes(buffer.str, '<div class="slot"><p><third>Third</third></p></div>');
+            }
+        },
+        'which are ad hoc': {
+            topic: function() {
+                ejs.render('<taglib src="simple.taglib"/><div><uprint attrs="%{ printAttrs }">A tagbody.</uprint></div>',
+                { 
+                  locals: {
+                    printAttrs: {
+                      first: "First",
+                      second: "Second",
+                      third: "Third"
+                    }                    
+                  }
+                },                
+                this.callback)
+            },
+            'at first html level': function(err, buffer) {
+                assert.includes(buffer.str, '<div><first>First</first>');
+            },
+            'at second html level': function(err, buffer) {
+                assert.includes(buffer.str, '<p><second>Second</second></p>');
+            },
+            'inside defined tag tagbody': function(err, buffer) {
+                assert.includes(buffer.str, '<div class="slot"><p><third>Third</third></p></div>');
+            }
+        },
+    },    
     'asynchronous ejs': {
         'can be implemented in a defined tag': {
             topic: function() {
@@ -503,5 +553,5 @@ vows.describe('dryml').addBatch({
                 }
             }                     
         }        
-    },       
+    },        
 }).export(module);

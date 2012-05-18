@@ -75,7 +75,7 @@ vows.describe('dryml').addBatch({
         'with only tags defined in the included taglibs available': {
             topic: function() {
               ejs.render('<taglib src="includes" />' +
-                         '<base-a />--<normal-a />--<normal-d />--<included-a />--<base-b />--<base-c />', {},
+                         '<base-a />--<normal-a />--<normal-d />--<included-a />--<base-b />--<base-c />--<base-e />', {},
               this.callback)                        
             }, 
             'contains tags in base': function(err, buffer) {
@@ -90,7 +90,10 @@ vows.describe('dryml').addBatch({
             'base tag can access taglibs from where it is defined': function(err, buffer) {
               assert.includes(buffer.str, 'Base-B+Normal-C+Included-C');
               assert.includes(buffer.str, 'Base-C+Normal-B+Normal-D');
-            },            
+            },
+            'and core': function(err, buffer) {
+              assert.includes(buffer.str, '<span>Base-E</span>');
+            } 
         },
         'can override tags defined in non-include taglibs': {
           topic: function() {
@@ -105,7 +108,7 @@ vows.describe('dryml').addBatch({
           'uses original tag in original context': function(err, buffer) {
             assert.includes(buffer.str, '<span>Base-D+Base-A</span>');
           },          
-        }
+        },
     },    
     'html': {
         'with simple attributes': {

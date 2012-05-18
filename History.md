@@ -1,3 +1,8 @@
+0.4.0 / 2012-05-18
+==================
+
+  * Taglibs will not conflict and included tags are not exported by default
+
 0.3.3 / 2012-05-18
 ==================
 

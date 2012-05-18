@@ -1,3 +1,9 @@
+0.4.1 / 2012-05-18
+==================
+
+  * Ignore conflicts between included taglibs
+  * Fix core tags to be available multiple include levels up
+  
 0.4.0 / 2012-05-18
 ==================
 

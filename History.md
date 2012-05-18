@@ -1,3 +1,18 @@
+0.3.3 / 2012-05-18
+==================
+
+  * Added support for passing attributes with an object, 
+    e.g `<a attrs="%{ linkAttrs }">Back</a>`, where `linkAttrs = { href: '#' }`
+  * Added switch/case/default tags, e.g.
+    
+    ```
+      <switch test="#{ testValue }">
+        <case test="a">A</case>
+        <case test="b"><span>B</span></case>
+        <default><span class="empty"></span></default>
+      </switch>
+    ```
+    
 0.3.2 / 2012-02-28
 ==================
 

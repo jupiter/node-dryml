@@ -10,7 +10,7 @@ var startedAt = new Date();
 console.log('Started...');
 
 function renderNext() {  
-  dryml.renderView('benchmark', { locals: { i: i } }, function(err, buffer) {    
+  dryml.renderView('benchmark', { locals: { i: i }, includeAllTaglibs: true }, function(err, buffer) {    
     if (i == 0) return process.nextTick(completed);
     
     process.nextTick(renderNext);

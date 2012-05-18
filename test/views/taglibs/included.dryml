@@ -1,0 +1,5 @@
+<taglib src="normal" />
+<taglib src="normal-d" />
+<def tag="included-a">Included-A</def>
+<def tag="included-b">Included-B+<normal-a /></def>
+<def tag="included-c">Included-C</def>

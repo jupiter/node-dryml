@@ -63,16 +63,50 @@ vows.describe('dryml').addBatch({
                 assert.equal(buffer.str, '<body><div>hello</div></body>');
             }
         },
-        'with nested taglib': {
+        'with nested taglib with includeAllTaglibs setting': {
             topic: function() {
-                ejs.render('<taglib src="sub/nested.taglib"/><body><hello /><another /></body>', {},
+                ejs.render('<taglib src="sub/nested.taglib" /><body><hello /><another /></body>', { includeAllTaglibs: true },
                 this.callback)
             },
             'return': function(err, buffer) {
                 assert.equal(buffer.str, '<body><div>hello</div><div>another</div></body>');
             }
+        },
+        'with only tags defined in the included taglibs available': {
+            topic: function() {
+              ejs.render('<taglib src="includes" />' +
+                         '<base-a />--<normal-a />--<normal-d />--<included-a />--<base-b />--<base-c />', {},
+              this.callback)                        
+            }, 
+            'contains tags in base': function(err, buffer) {
+              assert.includes(buffer.str, 'Base-A');
+            },
+            'no access to normally nested tag': function(err, buffer) {
+              assert.includes(buffer.str, '<normal-a></normal-a>--<normal-d></normal-d>');
+            },
+            'access to included nested tag': function(err, buffer) {
+              assert.includes(buffer.str, 'Included-A');
+            },
+            'base tag can access taglibs from where it is defined': function(err, buffer) {
+              assert.includes(buffer.str, 'Base-B+Normal-C+Included-C');
+              assert.includes(buffer.str, 'Base-C+Normal-B+Normal-D');
+            },            
+        },
+        'can override tags defined in non-include taglibs': {
+          topic: function() {
+            ejs.render('<taglib src="includes" />' +
+                       '<def tag="base-a">Local-Base-A</def>' +
+                       '<span><base-a /></span><span><base-d /></span>', {},
+            this.callback)                        
+          }, 
+          'uses redefined tag locally': function(err, buffer) {
+            assert.includes(buffer.str, '<span>Local-Base-A</span>');
+          },
+          'uses original tag in original context': function(err, buffer) {
+            assert.includes(buffer.str, '<span>Base-D+Base-A</span>');
+          },          
         }
-    },
+    },    
     'html': {
         'with simple attributes': {
             topic: ejs.render('<p class="two"><a href="someplace.html" title="something">Body Text</a></p>', {},

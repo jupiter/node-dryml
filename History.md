@@ -13,7 +13,7 @@
       </switch>
     ```
     
-0.3.2 / 2012-02-28
+0.3.2 / 2012-03-05
 ==================
 
   * Added support for merging options.globals using a 'merge-globals'

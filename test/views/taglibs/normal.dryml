@@ -1,0 +1,4 @@
+<taglib src="normal-d" />
+<def tag="normal-a">Normal-A</def>
+<def tag="normal-b">Normal-B+<normal-d /></def>
+<def tag="normal-c">Normal-C</def>

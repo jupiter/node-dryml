@@ -38,7 +38,7 @@ It is currently asynchronous, so does not work as standard Express view plugin.
   - `trimWhitespace`  Removes all whitespace between tags
   - `cache`           true/false whether to use cached tags/taglibs, default: true, default can be set on dryml object
   
-## DRYML Syntax
+## Tag definition
 
 ### Basic Layout (Pre-refactor)
 
@@ -141,6 +141,74 @@ Using a tag:
     <page title="Welcome" navigation="three" class="welcome">
         <p>Some Content</p>
     </page>
+    
+## Tag Libraries
+
+A file containing tag definitions can be used to selectively include tags for each page.
+
+    <taglib src="relative/path" />
+    
+An included taglib can also use tags in taglibs it in turn includes.  These tags are per default 
+not included for use outside this taglib.  You can specify for them to be included/exported wherever 
+this taglib is included.
+
+    <taglib src="relative/path" include="true" />
+    
+(To make this the default behaviour, or for backward compatibility, pass an option of `{ includeAllTaglibs: true }` when rendering.)
+
+Just like you cannot (re)define a tag with the same name twice in the same dryml file, you cannot redefine an explicitly included/exported tag.
+    
+## Locals, Attributes
+
+### Locals
+
+Locals passed to render function will be available as local variables in this file, 
+and also as an object on the `locals` variable as an object, for if you are not sure 
+whether the variable will be defined in locals passed to the view.
+
+### Attributes
+
+Attributes are treated similarly and will be available both as local variables, and as an
+`attributes` variable.  You can also pass in attributes directly from an object. These
+would override individual attributes specified on the tag, e.g. if `aAttrs.href == 'about:blank'`
+
+    <a attrs="%{ aAttrs }" href="#">Blank</a>
+    
+results in:
+  
+    <a href="about:blank">Blank</a>
+    
+This is useful if you have many attributes to pass to a tag, particularly defined tags.
+
+Attributes can also be passed by enclosing contents in an attr tag within, e.g.
+
+    <a href="#">
+      <attr:title>About this page</attr:title>
+      This Page
+    </a>
+
+This is also more useful with defined tags, where you may be outputting the contents to a block in layout, e.g.
+
+    <page>
+      <attr:footer>
+        <script type="text/javascript">
+            // Etc.
+        </script>
+      <attr:footer>
+      <p>Body text</p>
+    </page>
+
+resulting in:
+
+    <html>
+      <body>
+        <p>Body text</p>
+        <hr/>
+        <script type="text/javascript">
+            // Etc.
+        </script>
+      </body>
+    </html>
     
 ## Important Notes
 

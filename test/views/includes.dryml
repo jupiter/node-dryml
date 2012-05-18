@@ -1,0 +1,7 @@
+<taglib src="taglibs/normal" />
+<taglib src="taglibs/included" include="true" />
+<def tag="base-a">Base-A</def>
+<def tag="base-b">Base-B+<normal-c />+<included-c /></def>
+<def tag="base-c">Base-C+<normal-b /></def>
+<def tag="base-d">Base-D+<base-a /></def>
+<def tag="base-e"><span><if test="%{ false }">Never</if><else>Base-E</else></span></def>

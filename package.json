@@ -9,6 +9,7 @@
 		"node": ">= 0.6.0"
 	},
 	"dependencies": {
+	  "strutil": ">= 0.1.0",
 		"node-xml": "https://github.com/downloads/jupiter/node-dryml/node-xml-1.0.1.tgz",
 		"underscore": ">= 1.1.0",
     "JS-Entities": ">= 0.1.0"

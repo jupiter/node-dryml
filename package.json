@@ -15,9 +15,7 @@
     "JS-Entities": ">= 0.1.0"
 	},
   "devDependencies": {
-  	"vows": ">= 0.5.6",
-  	"express": ">= 1.0.7",
-  	"expresso": ">= 0.7.0"
+  	"vows": ">= 0.5.6"
   },	
 	"scripts": {
 		"test":"echo \"Vows:\n\" && vows test/*.vows*"

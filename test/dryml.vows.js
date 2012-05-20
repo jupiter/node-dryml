@@ -112,8 +112,10 @@ vows.describe('dryml').addBatch({
     },    
     'html': {
         'with simple attributes': {
-            topic: ejs.render('<p class="two"><a href="someplace.html" title="something">Body Text</a></p>', {},
-            this.callback),
+            topic: function(){
+              ejs.render('<p class="two"><a href="someplace.html" title="something">Body Text</a></p>', {},
+              this.callback);
+            },              
             'return': function(buffer) {
                 assert.equal(buffer.str, '<p class="two"><a href="someplace.html" title="something">Body Text</a></p>');
             }
@@ -455,6 +457,20 @@ vows.describe('dryml').addBatch({
                 assert.includes(buffer.str, '<first>Alt</first>');
             },
         },
+        'can use characters normally restricted within attributes': {
+          topic: function(){
+            ejs.render('<a href="%{ (1 > 2) ? \'\' : \'1\' }">A</a><a href="%{ (1 < 2) ? \'1\' : \'\' }">AB</a>' +
+                       '<a href=\'%{ (1 > 2) ? "" : "2" }\'>B</a><a href=\'%{ (1 < 2) ? "2" : "" }\'>BA</a>',
+                       {},
+                       this.callback);
+          },
+          'where attributes in double-quotes': function(err, buffer) {
+            assert.includes(buffer.str, '<a href="1">A</a><a href="1">AB</a>');
+          },
+          'where attributes in single-quotes': function(err, buffer) {
+            assert.includes(buffer.str, '<a href="2">B</a><a href="2">BA</a>');
+          }
+        }
     },
     'attributes can be merged': {
         'to html tags for': {

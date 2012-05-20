@@ -1,3 +1,10 @@
+0.4.2 / 2012-05-20
+==================
+
+  * Allow unencoded special characters within ejs in attributes
+  * Add slashes rather than escape strings in function source
+  * Fix core tag 'else' should test negative if `null` passed, but positive if no value passed
+
 0.4.1 / 2012-05-18
 ==================
 

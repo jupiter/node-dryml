@@ -8,7 +8,7 @@ ejs.encodeEntities = false;
 vows.describe('dryml').addBatch({
 	'core dryml tags are included': {
 	  'for if/else tags': {
-			topic: function(){ ejs.render('<if test="%{ true }">Yes!</if><else>Neh</else><if test="%{ false }">No!</if><else test="%{ false }">Yeh</else><else>Okay</else>', 
+			topic: function(){ ejs.render('<if test="%{ true }">Yes!</if><else>Neh</else><if test="%{ null }">No!</if><else test="%{ null }">Yeh</else><else>Okay</else>', 
 			    { debug: false}, this.callback) },
 			"'if' should be defined": function(err, buffer) {
 				assert.ok(buffer.str.indexOf('<if>') == -1);

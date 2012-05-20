@@ -1,7 +1,7 @@
 {
 	"name": "dryml",
 	"description": "DRYML for Node",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"author": "Pieter Raubenheimer <pieter@wavana.com>",
 	"keywords": ["template", "engine", "dryml", "xml", "html", "ejs", "express"],
 	"main": "./lib/dryml.js",
@@ -9,14 +9,13 @@
 		"node": ">= 0.6.0"
 	},
 	"dependencies": {
+	  "strutil": ">= 0.1.0",
 		"node-xml": "https://github.com/downloads/jupiter/node-dryml/node-xml-1.0.1.tgz",
 		"underscore": ">= 1.1.0",
     "JS-Entities": ">= 0.1.0"
 	},
   "devDependencies": {
-  	"vows": ">= 0.5.6",
-  	"express": ">= 1.0.7",
-  	"expresso": ">= 0.7.0"
+  	"vows": ">= 0.5.6"
   },	
 	"scripts": {
 		"test":"echo \"Vows:\n\" && vows test/*.vows*"

@@ -1,3 +1,9 @@
+0.4.2 / 2012-05-20
+==================
+
+  * Allow unencoded special characters within ejs in attributes
+  * Add slashes rather than escape strings in function source
+
 0.4.1 / 2012-05-18
 ==================
 

@@ -279,12 +279,12 @@ vows.describe('dryml').addBatch({
         },
         'in attribute tags': {
             topic: function() {
-                ejs.render('<taglib src="simple.taglib"/><div><print><attr:first>First</attr:first><attr:second>Second</attr:second><attr:third>Third</attr:third></print></div>',
-                {},
+                ejs.render('<taglib src="simple.taglib"/><div><print><attr:first>&#10003;First</attr:first><attr:second>Second</attr:second><attr:third>Third</attr:third></print></div>',
+                { encodeEntities: true },
                 this.callback)
             },
-            'at first html level': function(err, buffer) {
-                assert.includes(buffer.str, '<div><first>First</first>');
+            'at first html level, with encoded value': function(err, buffer) {
+                assert.includes(buffer.str, '<div><first>&#10003;First</first>');
             },
             'at second html level': function(err, buffer) {
                 assert.includes(buffer.str, '<p><second>Second</second></p>');

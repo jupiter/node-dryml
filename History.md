@@ -1,3 +1,9 @@
+0.4.3 / 2012-05-21
+==================
+
+  * Fix entities in attr tags being re-encoded/encoded twice
+  * Use new entities library for better entity encoding/decoding
+  
 0.4.2 / 2012-05-20
 ==================
 

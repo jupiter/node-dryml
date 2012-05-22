@@ -1,3 +1,8 @@
+0.4.4 / 2012-05-22
+==================
+
+  * Fix new entities library not handling non-strings
+  
 0.4.3 / 2012-05-21
 ==================
 

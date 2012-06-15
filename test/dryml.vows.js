@@ -638,6 +638,7 @@ vows.describe('dryml').addBatch({
             topic: function() {
                 ejs.render('<p align="center">"Some" &lt; \'Any\'; None > &amp;</p>' +
                 '<p oper="1 &gt; 1">Nevermind</p>' + 
+                '<p><% \nvar x = 1 < 2; %><%= x %></p>' +
                 '<p atu="%{ \'Ben &amp; Jerry\' }">Boo!</p>' +
                 '<p><%= \'Kenneth & Clark\' %></p>' + 
                 '<p><%- _encode(\'Ben & Jerry\') %></p>',                 
@@ -708,5 +709,14 @@ vows.describe('dryml').addBatch({
                 }
             }                     
         }        
-    },        
+    },      
+    'blank attributes are not output per default': {
+      topic: function(){
+        ejs.render('<input type="checkbox" checked="" value="%{ false }" />', {}, this.callback);
+      },
+      
+      'return': function(err, buffer) {
+        assert.includes(buffer.str, '<input type="checkbox" value="false"/>');        
+      }
+    }  
 }).export(module);

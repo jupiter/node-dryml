@@ -28,15 +28,27 @@ vows.describe('dryml').addBatch({
 				assert.includes(buffer.str, '<p>True</p>');
 			}
 		},
+		'with inline code including unencoded entities': {
+		  topic: function(){
+        ejs.render('<p><%= (1 > 0) ? \'Law\' : (0 < 1) ? "Law" : "Impossible" %></p>', {}, this.callback)
+      },
+      'works': function(buffer) {
+        assert.includes(buffer.str, '<p>Law</p>');
+      }
+		},		
 		'with scope': {
-			topic: ejs.render('<p><%= this %></p>', { scope: 'Scope String' }, this.callback),
+			topic: function(){
+        ejs.render('<p><%= this %></p>', { scope: 'Scope String' }, this.callback)
+      },
 			'at top level, as render option': function(buffer) {
 				assert.includes(buffer.str, '<p>Scope String</p>')
 			}
 		},
 		'with locals': {
-			topic: ejs.render('<% if (name) { %>\n<p><%= name %></p>\n<p><%= email %></p><% } %>', 
-								{ locals: { name: 'tj', email: 'tj@sencha.com' } }, this.callback),
+			topic: function(){
+			  ejs.render('<% if (name) { %>\n<p><%= name %></p>\n<p><%= email %></p><% } %>', 
+								{ locals: { name: 'tj', email: 'tj@sencha.com' } }, this.callback);
+			},
 			'retaining line breaks': function(buffer) {
 				assert.equal(buffer.str, '\n<p>tj</p>\n<p>tj@sencha.com</p>')
 			}			

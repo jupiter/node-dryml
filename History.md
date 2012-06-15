@@ -1,3 +1,9 @@
+0.4.5 / 2012-06-15
+==================
+
+  * Added #4: Should be able to omit empty attributes
+  * Fixed #5: Javascript within `<% %>` block should not require entities
+  
 0.4.4 / 2012-05-22
 ==================
 

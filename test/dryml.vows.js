@@ -638,6 +638,7 @@ vows.describe('dryml').addBatch({
             topic: function() {
                 ejs.render('<p align="center">"Some" &lt; \'Any\'; None > &amp;</p>' +
                 '<p oper="1 &gt; 1">Nevermind</p>' + 
+                '<p><% \nvar x = 1 < 2; %><%= x %></p>' +
                 '<p atu="%{ \'Ben &amp; Jerry\' }">Boo!</p>' +
                 '<p><%= \'Kenneth & Clark\' %></p>' + 
                 '<p><%- _encode(\'Ben & Jerry\') %></p>',                 

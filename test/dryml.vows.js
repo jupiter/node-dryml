@@ -709,5 +709,14 @@ vows.describe('dryml').addBatch({
                 }
             }                     
         }        
-    },        
+    },      
+    'blank attributes are not output per default': {
+      topic: function(){
+        ejs.render('<input type="checkbox" checked="" value="%{ false }" />', {}, this.callback);
+      },
+      
+      'return': function(err, buffer) {
+        assert.includes(buffer.str, '<input type="checkbox" value="false"/>');        
+      }
+    }  
 }).export(module);

@@ -1,3 +1,11 @@
+0.4.6 / 2012-07-26
+==================
+
+  * Minor performance improvements
+  * Async buffers that are not really async returns contents immediately,
+    e.g. child tag attributes processed using an async buffer:
+      contents of a child tag attribute is already set within contents of tag
+  
 0.4.5 / 2012-06-15
 ==================
 

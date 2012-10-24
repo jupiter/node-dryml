@@ -1,3 +1,7 @@
+0.4.9 / 2012-10-24
+==================
+  * Return original errors (to be able to detect err.code == 'ENOENT')
+  
 0.4.8 / 2012-10-16
 ==================
   * Fix `<textarea />` breaks

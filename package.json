@@ -1,7 +1,7 @@
 {
 	"name": "dryml",
 	"description": "DRYML for Node",
-	"version": "0.4.8",
+	"version": "0.4.9",
 	"author": "Pieter Raubenheimer <pieter@wavana.com>",
 	"keywords": ["template", "engine", "dryml", "xml", "html", "ejs", "express"],
 	"main": "./lib/dryml.js",

@@ -600,7 +600,7 @@ vows.describe('dryml').addBatch({
                 if (err) {
                     throw err;
                 } else {
-                    assert.includes(buffer.str, '<p align="center">&quot;Some&quot; &lt; &apos;Any&apos;; None &gt; &amp;</p>');
+                    assert.includes(buffer.str, '<p align="center">&quot;Some&quot; &lt; &#39;Any&#39;; None &gt; &amp;</p>');
                 }
             },
             'simple attributes': function(err, buffer) {

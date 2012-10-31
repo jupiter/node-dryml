@@ -1,3 +1,8 @@
+0.4.10 / 2012-10-31
+==================
+  * Replace &apos; with &#39; for IE
+  * Remove unused dependency
+  
 0.4.9 / 2012-10-24
 ==================
   * Return original errors (to be able to detect err.code == 'ENOENT')

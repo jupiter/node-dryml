@@ -1,3 +1,7 @@
+0.4.11 / 2012-11-14
+==================
+  * Fix entities not encoded in taglibs
+  
 0.4.10 / 2012-10-31
 ==================
   * Replace &apos; with &#39; for IE

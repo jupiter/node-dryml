@@ -1,3 +1,7 @@
+0.4.12 / 2012-11-15
+===================
+  * Attributes provided by `<attr:/>` tags provided as Buffer, without encode
+  
 0.4.11 / 2012-11-14
 ==================
   * Fix entities not encoded in taglibs

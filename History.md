@@ -1,3 +1,7 @@
+0.4.13 / 2013-07-31
+===================
+  * Use prototypical objects to reduce anonymous object and function allocs
+  
 0.4.12 / 2012-11-15
 ===================
   * Attributes provided by `<attr:/>` tags provided as Buffer, without encode
